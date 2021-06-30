@@ -2,53 +2,52 @@
 @mixin select($type, $color) {
   .select-#{$type}.el-select {
   }
-  .select-#{$type}.el-select .el-input  {
-    .el-input__suffix{
+  .select-#{$type}.el-select .el-input {
+    .el-input__suffix {
       display: flex;
       align-items: center;
     }
-    .el-input__icon{
-      border-radius:20px;
+    .el-input__icon {
+      border-radius: 0.4285rem;
       height: 40px;
       width: 30px;
     }
 
-    input{
+    input {
       background-color: transparent;
       border-width: 1px;
-      border-color: lighten($black,5%);
+      border-color: lighten($black, 5%);
       color: $color;
     }
-    &:hover{
-      input{
+    &:hover {
+      input {
         border-color: $color !important;
       }
     }
 
-    .el-input__icon{
-      color:$color;
+    .el-input__icon {
+      color: $color;
     }
   }
-  .select-#{$type}{
-
-    .el-tag, .el-tag.el-tag--info {
+  .select-#{$type} {
+    .el-tag,
+    .el-tag.el-tag--info {
       line-height: 24px;
       background-color: $color;
       border: none;
-      .el-tag__close{
+      .el-tag__close {
         width: 20px;
         height: 20px;
         background-color: transparent;
 
         &:hover {
-         background-color: white;
-         color: $color;
+          background-color: white;
+          color: $color;
         }
 
         &:before {
           margin-top: 2px;
         }
-
       }
     }
     &.el-select-dropdown__item.selected,
@@ -58,9 +57,8 @@
     }
   }
 
-  &.el-select-dropdown.is-multiple
-  .el-select-dropdown__item.selected{
-    &.select-#{$type}{
+  &.el-select-dropdown.is-multiple .el-select-dropdown__item.selected {
+    &.select-#{$type} {
       color: $color;
     }
   }
@@ -78,9 +76,6 @@
   }
 }
 
-@include select('default', $default)
-@include select('info', $info)
-@include select('primary', $primary)
-@include select('success', $success)
-@include select('warning', $warning)
-@include select('danger', $danger)
+@include select("default", $default) @include select("info", $info) @include
+  select("primary", $primary) @include select("success", $success) @include
+  select("warning", $warning) @include select("danger", $danger);

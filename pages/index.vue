@@ -2,6 +2,17 @@
   <div class="row">
     <!-- Big Chart -->
     <div class="col-12">
+      <div slot="header">
+        <h2 class="card-title">Panel de control</h2>
+      </div>
+
+      <div class="row plantStatusIndicators">
+        <div class="col-3"><plant-status :config="config1"></plant-status></div>
+        <div class="col-3"><plant-status :config="config2"></plant-status></div>
+        <div class="col-3"><plant-status :config="config3"></plant-status></div>
+        <div class="col-3"><plant-status :config="config4"></plant-status></div>
+      </div>
+      <button @click="sendDataToWidget()">PRUEVA</button>
       <card type="chart">
         <template slot="header">
           <div class="row">
@@ -176,6 +187,7 @@ import * as chartConfigs from "@/components/Charts/config";
 import TaskList from "@/components/Dashboard/TaskList";
 import config from "@/config";
 import { Table, TableColumn } from "element-ui";
+import PlantStatus from "~/components/widgets/PlantStatus.vue";
 
 let bigChartData = [
   [100, 70, 90, 70, 85, 60, 75, 60, 90, 80, 110, 100],
@@ -218,6 +230,7 @@ export default {
     LineChart,
     BarChart,
     TaskList,
+    PlantStatus,
     [Table.name]: Table,
     [TableColumn.name]: TableColumn,
   },
@@ -351,6 +364,38 @@ export default {
         gradientColors: config.colors.primaryGradient,
         gradientStops: [1, 0.4, 0],
       },
+      config1: {
+        idUsuario: 1123,
+        idDispositivo: "1",
+        idPlanta: "1",
+        nombre: "Geranio",
+        temperatura: "",
+        humedad: 5,
+      },
+      config2: {
+        idUsuario: 1123,
+        idDispositivo: "1",
+        idPlanta: "2",
+        nombre: "Albahaca",
+        temperatura: "",
+        humedad: 5,
+      },
+      config3: {
+        idUsuario: 1123,
+        idDispositivo: "2",
+        idPlanta: "1",
+        nombre: "Camadorea",
+        temperatura: "",
+        humedad: "",
+      },
+      config4: {
+        idUsuario: 1123,
+        idDispositivo: "3",
+        idPlanta: "1",
+        nombre: "Rosa",
+        temperatura: "",
+        humedad: "5",
+      },
     };
   },
   computed: {
@@ -372,6 +417,13 @@ export default {
     },
   },
   methods: {
+    sendDataToWidget() {
+      const dataToSend = {
+        temperatura: Math.round(Math.random() * (99 - 1) + 1, 5),
+        humedad: Math.round(Math.random() * (100 - 1) + 1, 5),
+      };
+      this.$nuxt.$emit("gardify/1123/hash/1/2", dataToSend);
+    },
     initBigChart(index) {
       let chartData = {
         datasets: [
@@ -392,4 +444,11 @@ export default {
   },
 };
 </script>
-<style></style>
+<style>
+.plantStatusIndicators {
+  display: flex;
+  justify-content: space-around;
+
+  flex-wrap: nowrap;
+}
+</style>

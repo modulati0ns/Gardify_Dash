@@ -1,26 +1,53 @@
 <template>
   <div class="wrapper" :class="{ 'nav-open': $sidebar.showSidebar }">
+    <!-- Notifications -->
     <notifications></notifications>
+    <!-- Sidebar -->
     <side-bar
       :background-color="sidebarBackground"
-      short-title="CT"
-      title="Creative Tim"
+      short-title="Gfy"
+      title="Gardify"
     >
       <template slot-scope="props" slot="links">
         <sidebar-item
           :link="{
-            name: $t('sidebar.dashboard'),
-            icon: 'tim-icons icon-chart-pie-36',
-            path: '/starter-page',
+            name: 'Panel de control',
+            icon: 'tim-icons icon-components',
+            path: '/',
+          }"
+        >
+        </sidebar-item>
+        <sidebar-item
+          :link="{
+            name: 'Dispositivos',
+            icon: 'tim-icons icon-mobile',
+            path: '/devices',
+          }"
+        >
+        </sidebar-item>
+        <sidebar-item
+          :link="{
+            name: 'Alertas',
+            icon: 'tim-icons icon-alert-circle-exc',
+            path: '/alerts',
+          }"
+        >
+        </sidebar-item>
+        <sidebar-item
+          :link="{
+            name: 'Configuración',
+            icon: 'tim-icons icon-settings',
+            path: '/settings',
           }"
         >
         </sidebar-item>
       </template>
     </side-bar>
     <div class="main-panel" :data="sidebarBackground">
+      <!-- Navbar -->
       <dashboard-navbar></dashboard-navbar>
       <router-view name="header"></router-view>
-
+      <!-- Contenido -->
       <div :class="{ content: !isFullScreenRoute }" @click="toggleSidebar">
         <zoom-center-transition :duration="200" mode="out-in">
           <!-- your content here -->
@@ -67,7 +94,7 @@ export default {
   },
   data() {
     return {
-      sidebarBackground: "vue", //vue|blue|orange|green|red|primary
+      sidebarBackground: "primary", //vue|blue|orange|green|red|primary
     };
   },
   computed: {

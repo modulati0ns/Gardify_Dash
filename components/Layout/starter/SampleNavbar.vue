@@ -16,7 +16,8 @@
           <span class="navbar-toggler-bar bar3"></span>
         </button>
       </div>
-      <a class="navbar-brand" href="#pablo">{{ routeName }}</a>
+      <!-- <a class="navbar-brand" href="#pablo">{{ routeName }}</a> -->
+      <!-- <h2 class="title">{{  }}</h2> -->
     </div>
 
     <ul class="navbar-nav" :class="$rtl.isRTL ? 'mr-auto' : 'ml-auto'">
@@ -59,9 +60,7 @@
         title-classes="nav-link"
         menu-classes="dropdown-navbar"
       >
-        <template
-          slot="title"
-        >
+        <template slot="title">
           <div class="photo"><img src="img/mike.jpg" /></div>
           <b class="caret d-none d-lg-block d-xl-block"></b>
           <p class="d-lg-none">Log out</p>
@@ -81,31 +80,31 @@
   </base-nav>
 </template>
 <script>
-import { CollapseTransition } from 'vue2-transitions';
-import { BaseNav, Modal } from '@/components';
+import { CollapseTransition } from "vue2-transitions";
+import { BaseNav, Modal } from "@/components";
 
 export default {
   components: {
     CollapseTransition,
     BaseNav,
-    Modal
+    Modal,
   },
   computed: {
     routeName() {
       const { path } = this.$route;
-      let parts = path.split('/')
-      return parts.map(p => this.capitalizeFirstLetter(p)).join(' ');
+      let parts = path.split("/");
+      return parts.map((p) => this.capitalizeFirstLetter(p)).join(" ");
     },
     isRTL() {
       return this.$rtl.isRTL;
-    }
+    },
   },
   data() {
     return {
       activeNotifications: false,
       showMenu: false,
       searchModalVisible: false,
-      searchQuery: ''
+      searchQuery: "",
     };
   },
   methods: {
@@ -126,12 +125,15 @@ export default {
     },
     toggleMenu() {
       this.showMenu = !this.showMenu;
-    }
-  }
+    },
+  },
 };
 </script>
 <style scoped>
 .top-navbar {
   top: 0px;
+}
+.title {
+  margin-top: 15px;
 }
 </style>
