@@ -80,7 +80,7 @@ router.post('/login', async (req, res) => {
                 const token = jwt.sign({
                     userData: foundUser
                 }, 'GardiFYHaSH2021', {
-                    expiresIn: 120
+                    expiresIn: 3600 * 24
                 });
 
 
@@ -98,6 +98,7 @@ router.post('/login', async (req, res) => {
             }
         }
     } catch (err) {
+
         res.status(401).json({
             'status:': 'fail'
         });
