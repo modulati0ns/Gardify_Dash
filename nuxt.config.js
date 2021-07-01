@@ -17,7 +17,7 @@ export default {
   /*
    ** Headers of the page
    */
-  ssr: false,
+  ssr: true,
   head: {
     title: 'Nuxt Black Dashboard',
     meta: [{
@@ -98,8 +98,12 @@ export default {
 
     '@nuxtjs/pwa',
     'nuxt-i18n',
-    'nuxtjs-mdi-font'
+    'nuxtjs-mdi-font',
+    '@nuxtjs/axios'
   ],
+  axios: {
+    baseURL: 'http://localhost:1996'
+  },
   i18n: {
     locales: [{
         code: 'en',
@@ -131,7 +135,10 @@ export default {
             'libraryName': 'element-ui',
             'styleLibraryName': 'theme-chalk'
           }
-        ]
+        ],
+        ['@babel/plugin-proposal-private-methods', {
+          loose: true
+        }]
       ]
     }
   }

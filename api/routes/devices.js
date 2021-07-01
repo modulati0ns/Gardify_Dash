@@ -12,20 +12,34 @@ import deviceModel from '../modelos/deviceModel.js'
 // CRUD de dispositivos
 
 // Leer informacion de uno o varios dispositivos
-router.get("/devices", comprobacionToken, (req, res) => {
+router.get("/devices", comprobacionToken, async (req, res) => {
     try {
 
         // Ahora que hemos confirmado que la request tiene un token valido, listamos los usuarios de este usuario
-        const userID = req.userData._id;
+        const userId = req.userData._id;
 
-        res.json({
-            status: 'success'
-        })
+        // Obtener los dispositivos del usuario
+        const devices = await deviceModel.find({
+            userId: userId
+        });
 
+        // Devolvemos los dispositivos encontrados
+        if (devices != "undefined") {
+            res.json({
+                'status': 'success',
+                'description': 'Se han encontrado los siguientes dispositivos',
+                'devices': devices
+            })
+        } else {
+            res.json({
+                'status': 'fail',
+                'error': "No se han encontrado dispositivos"
+            })
+        }
     } catch (error) {
         res.json({
-            status: 'fail',
-            error: error
+            'status': 'fail',
+            'error': error
         })
     }
 });
@@ -51,24 +65,59 @@ router.post("/devices", comprobacionToken, async (req, res) => {
         await deviceModel.create(nuevoDispositivo);
 
         res.json({
-            status: 'success'
+            'status': 'success',
+            'description': 'Dispositivo añadido correctamente',
         });
 
     } catch (err) {
 
         res.json({
-            status: 'fail',
-            error: err
+            'status': 'fail',
+            'error': err
         });
 
     }
 });
 
 // Eliminar un dispositivo
-router.delete("/devices", (req, res) => {
+router.delete("/devices", comprobacionToken, async (req, res) => {
+    try {
+        // Ahora que hemos confirmado que la request tiene un token valido, listamos los usuarios de este usuario
+        const userId = req.userData._id;
 
+        // Recogemos de los parametros del request el Id del dispositivo a borrar
+        const deviceId = req.query.deviceId;
+
+        // Borramos el dispositivo y nos aseguramos que este asociado al usuario actual
+        const result = await deviceModel.deleteOne({
+            deviceId: deviceId,
+            userId: userId
+        });
+
+        // Si se ha eliminado un dispositivo
+        if (result.deletedCount > 0) {
+            res.json({
+                'status': 'success',
+                'description': 'Dispositivo eliminado correctamente'
+            });
+
+            // Si no se ha eliminado ningun dispositivo
+        } else {
+            res.json({
+                'status': 'fail',
+                'description': 'No se ha encontrado el dispositivo a eliminar'
+            });
+        }
+
+    } catch (error) {
+        res.json({
+            'status': 'fail',
+            'error': error
+        })
+    }
 });
 
+// TODO: Caracteristica futura
 // Actualizar informacion de uno o varios dispositivos
 router.put("/devices", (req, res) => {
 

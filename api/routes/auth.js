@@ -32,7 +32,8 @@ router.post('/register', async (req, res) => {
 
         // Devolucion de usuario registrado correctamente
         res.json({
-            'status:': 'correcto'
+            'status:': 'correcto',
+            'description': 'Usuario registrado correctamente',
         })
 
     } catch (err) {
@@ -83,12 +84,15 @@ router.post('/login', async (req, res) => {
                     expiresIn: 3600 * 24
                 });
 
-
-                // Devolucion de login correcto y token
-                return res.json({
-                    'status:': 'success',
-                    'token': token
-                });
+                // Si el token es correcto se inicia la sesión
+                if (token) {
+                    // Devolucion de login correcto y token
+                    return res.json({
+                        'status': 'success',
+                        'description': 'Sesion iniciada correctamente',
+                        'token': token
+                    });
+                }
 
 
 
@@ -100,7 +104,8 @@ router.post('/login', async (req, res) => {
     } catch (err) {
 
         res.status(401).json({
-            'status:': 'fail'
+            'status': 'fail',
+            'description': 'Humo un fallo en el inicio de sesion'
         });
     }
 
