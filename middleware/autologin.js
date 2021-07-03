@@ -1,0 +1,1 @@
+/* Middleware encargado de hacer autologin al usuario o autologout segun el estado de su token */
