@@ -32,7 +32,7 @@ router.post('/register', async (req, res) => {
 
         // Devolucion de usuario registrado correctamente
         res.json({
-            'status:': 'correcto',
+            'status': 'success',
             'description': 'Usuario registrado correctamente',
         })
 
@@ -40,9 +40,10 @@ router.post('/register', async (req, res) => {
 
         console.log("ERROR. No se ha añadido el usuario. Razon: " + err);
 
-        // Devolucion de error 500 en el registro
+        // Devolucion de error 500 en el registro y el error para detectar si el email es unico
         res.status(500).json({
-            'status:': 'fail'
+            'status:': 'fail',
+            'error': err
         })
     }
 
@@ -72,7 +73,7 @@ router.post('/login', async (req, res) => {
             if (bcrypt.compareSync(userToLogin.password, foundUser.password)) {
                 // Contraseña correcta
 
-                // Eliminamos la contraseña de la variable usuario encontrado
+                // Eliminamos la contraseña de la variable usuario encontrado para que no aaprezca en el token
                 foundUser.set('password', undefined, {
                     strict: false
                 });
@@ -86,11 +87,13 @@ router.post('/login', async (req, res) => {
 
                 // Si el token es correcto se inicia la sesión
                 if (token) {
+                    console.log("Sesion iniciada correctamente");
                     // Devolucion de login correcto y token
                     return res.json({
                         'status': 'success',
                         'description': 'Sesion iniciada correctamente',
-                        'token': token
+                        'token': token,
+                        'userData': foundUser
                     });
                 }
 
@@ -102,10 +105,11 @@ router.post('/login', async (req, res) => {
             }
         }
     } catch (err) {
-
+        console.log("Hubo un fallo en el inicio se sesion");
         res.status(401).json({
             'status': 'fail',
-            'description': 'Humo un fallo en el inicio de sesion'
+            'description': 'Hubo un fallo en el inicio de sesion',
+            'error': err
         });
     }
 

@@ -52,6 +52,7 @@
           placeholder="SEARCH"
         />
       </modal>
+
       <base-dropdown
         tag="li"
         :menu-on-right="!$rtl.isRTL"
@@ -61,8 +62,12 @@
         menu-classes="dropdown-navbar"
       >
         <template slot="title">
+          <span class="user"
+            >{{ $store.state.user.nombre }}
+            {{ $store.state.user.apellidos }}</span
+          >
           <div class="photo"><img src="img/mike.jpg" /></div>
-          <b class="caret d-none d-lg-block d-xl-block"></b>
+          <!-- <b class="caret d-none d-lg-block d-xl-block"></b> -->
           <p class="d-lg-none">Log out</p>
         </template>
         <li class="nav-link">
@@ -135,5 +140,9 @@ export default {
 }
 .title {
   margin-top: 15px;
+}
+
+.user {
+  padding: 10px;
 }
 </style>

@@ -17,7 +17,7 @@ export default {
   /*
    ** Headers of the page
    */
-  ssr: true,
+  ssr: false,
   head: {
     title: 'Nuxt Black Dashboard',
     meta: [{
@@ -74,7 +74,9 @@ export default {
    ** Plugins to load before mounting the App
    */
   plugins: [
-    `~/plugins/dashboard-plugin.js`
+    `~/plugins/dashboard-plugin.js`,
+
+
   ],
   /*
    ** Nuxt.js dev-modules
@@ -99,7 +101,7 @@ export default {
     '@nuxtjs/pwa',
     'nuxt-i18n',
     'nuxtjs-mdi-font',
-    '@nuxtjs/axios'
+    '@nuxtjs/axios',
   ],
   axios: {
     baseURL: 'http://localhost:1996'

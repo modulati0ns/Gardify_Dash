@@ -61,6 +61,7 @@
           <div class="copyright">
             2021. Gardify. Todos los derechos reservados.
           </div>
+          <notifications></notifications>
         </div>
       </div>
     </div>
@@ -68,14 +69,14 @@
 </template>
 
 <script>
-import BaseButton from "~/components/BaseButton.vue";
+// import notify from "~/components/NotificationPlugin/Notifications.vue";
 export default {
   layout: "blank",
   data() {
     return {
       user: {
         nombre: "",
-        apellido: "",
+        apellidos: "",
         email: "",
         password: "",
       },
@@ -94,15 +95,50 @@ export default {
   },
   methods: {
     // Funcion llamada cuando se pulsa el boton de registro
+
     register() {
       // LLamada a la API de registro enviando los datos obtenidos en el formulario
       this.$axios
         .post("/gfyapiv1/register", this.user)
         .then((res) => {
-          console.log(res.data);
+          // Comprobamos que el registro ha sido correcto
+          if (res.data.status == "success") {
+            // Mostramos notificacion de registro correcto
+            this.$notify({
+              verticalAlign: "bottom",
+              horizontalAlign: "center",
+              type: "success",
+              icon: "tim-icons icon-check-2",
+              message: "El registro se ha realizado correctamente.",
+            });
+
+            this.user.nombre = "";
+            this.user.apellidos = "";
+            this.user.email = "";
+            this.user.password = "";
+          }
         })
-        .catch((e) => {
-          console.log(e.response.data);
+        .catch((error) => {
+          // Notificacion en caso de que el usuario ya exista
+          if (error.response.data.error.errors.email.kind == "unique") {
+            this.$notify({
+              verticalAlign: "bottom",
+              horizontalAlign: "center",
+              type: "danger",
+              icon: "tim-icons icon-alert-circle-exc",
+              message: "Error. El usuario ya existe.",
+            });
+
+            // Notificacion en cualquier otro caso
+          } else {
+            this.$notify({
+              verticalAlign: "bottom",
+              horizontalAlign: "center",
+              type: "danger",
+              icon: "tim-icons icon-alert-circle-exc",
+              message: "Error. Se ha producido un fallo en el registro.",
+            });
+          }
         });
     },
   },
