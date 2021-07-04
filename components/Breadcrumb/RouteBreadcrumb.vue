@@ -18,30 +18,30 @@
 </template>
 
 <script>
-import BreadCrumb from './Breadcrumb';
-import BreadCrumbItem from './BreadcrumbItem';
+import BreadCrumb from "./Breadcrumb";
+import BreadCrumbItem from "./BreadcrumbItem";
 
 export default {
-  name: 'route-breadcrumb',
+  name: "route-breadcrumb",
   components: {
     BreadCrumb,
-    BreadCrumbItem
+    BreadCrumbItem,
   },
   computed: {
     routeName() {
       const { path } = this.$route;
-      let parts = path.split('/')
-      return parts.map(p => this.capitalizeFirstLetter(p)).join(' ');
-    }
+      let parts = path.split("/");
+      return parts.map((p) => this.capitalizeFirstLetter(p)).join(" ");
+    },
   },
   methods: {
     capitalizeFirstLetter(string) {
-      if (!string || typeof string !== 'string') {
-        return ''
+      if (!string || typeof string !== "string") {
+        return "";
       }
       return string.charAt(0).toUpperCase() + string.slice(1);
-    }
-  }
+    },
+  },
 };
 </script>
 

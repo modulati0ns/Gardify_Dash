@@ -53,6 +53,7 @@
 // import notify from "~/components/NotificationPlugin/Notifications.vue";
 export default {
   layout: "blank",
+  middleware: "autologin",
   data() {
     return {
       user: {
@@ -96,6 +97,7 @@ export default {
             // Formamos un objeto con los datos principales del usuario
             const user = {
               token: res.data.token,
+              userId: res.data.userData._id,
               nombre: res.data.userData.nombre,
               apellidos: res.data.userData.apellidos,
               email: res.data.userData.email,
@@ -110,30 +112,19 @@ export default {
             // Enviamos al usuario al dashboard
             setTimeout(function() {
               $nuxt.$router.push("/");
-            }, 3000);
+            }, 1500);
           }
         })
         .catch((error) => {
           // Notificacion en caso de que el usuario ya exista
-          if (error.response.data.error.errors.email.kind == "unique") {
-            this.$notify({
-              verticalAlign: "bottom",
-              horizontalAlign: "center",
-              type: "danger",
-              icon: "tim-icons icon-alert-circle-exc",
-              message: "Error. El usuario ya existe.",
-            });
 
-            // Notificacion en cualquier otro caso
-          } else {
-            this.$notify({
-              verticalAlign: "bottom",
-              horizontalAlign: "center",
-              type: "danger",
-              icon: "tim-icons icon-alert-circle-exc",
-              message: "Error. Se ha producido un fallo en el registro.",
-            });
-          }
+          this.$notify({
+            verticalAlign: "bottom",
+            horizontalAlign: "center",
+            type: "danger",
+            icon: "tim-icons icon-alert-circle-exc",
+            message: "Error. Se ha producido un fallo en el inicio de sesion.",
+          });
         });
     },
   },

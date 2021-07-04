@@ -82,6 +82,8 @@ router.post("/devices", comprobacionToken, async (req, res) => {
 // Eliminar un dispositivo
 router.delete("/devices", comprobacionToken, async (req, res) => {
     try {
+        console.log("Intentando eliminar dispositivo ");
+
         // Ahora que hemos confirmado que la request tiene un token valido, listamos los usuarios de este usuario
         const userId = req.userData._id;
 
@@ -96,6 +98,9 @@ router.delete("/devices", comprobacionToken, async (req, res) => {
 
         // Si se ha eliminado un dispositivo
         if (result.deletedCount > 0) {
+
+            console.log("Dispositivo " + deviceId + " eliminado correctamente");
+
             res.json({
                 'status': 'success',
                 'description': 'Dispositivo eliminado correctamente'
@@ -103,6 +108,9 @@ router.delete("/devices", comprobacionToken, async (req, res) => {
 
             // Si no se ha eliminado ningun dispositivo
         } else {
+
+            console.log("No se ha encontrado el dispositivo: " + deviceId);
+
             res.json({
                 'status': 'fail',
                 'description': 'No se ha encontrado el dispositivo a eliminar'
@@ -110,6 +118,7 @@ router.delete("/devices", comprobacionToken, async (req, res) => {
         }
 
     } catch (error) {
+        console.log("Error al eliminar dispositivo: " + error);
         res.json({
             'status': 'fail',
             'error': error

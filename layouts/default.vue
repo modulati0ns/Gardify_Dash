@@ -92,6 +92,7 @@ export default {
     SlideYDownTransition,
     ZoomCenterTransition,
   },
+  middleware: "autologout",
   data() {
     return {
       sidebarBackground: "primary", //vue|blue|orange|green|red|primary

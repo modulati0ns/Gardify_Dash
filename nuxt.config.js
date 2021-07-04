@@ -19,7 +19,7 @@ export default {
    */
   ssr: false,
   head: {
-    title: 'Nuxt Black Dashboard',
+    title: 'Gardify',
     meta: [{
         charset: 'utf-8'
       },
@@ -52,7 +52,8 @@ export default {
     }
   },
   router: {
-    linkExactActiveClass: 'active'
+    linkExactActiveClass: 'active',
+    // trailingSlash: false
   },
   /*
    ** Customize the progress-bar color
@@ -99,27 +100,27 @@ export default {
   modules: [
 
     '@nuxtjs/pwa',
-    'nuxt-i18n',
+    // 'nuxt-i18n',
     'nuxtjs-mdi-font',
     '@nuxtjs/axios',
   ],
   axios: {
     baseURL: 'http://localhost:1996'
   },
-  i18n: {
-    locales: [{
-        code: 'en',
-        file: 'en.js'
-      },
-      {
-        code: 'ar',
-        file: 'ar.js'
-      }
-    ],
-    lazy: true,
-    langDir: 'lang/',
-    defaultLocale: 'en',
-  },
+  // i18n: {
+  //   locales: [{
+  //       code: 'en',
+  //       file: 'en.js'
+  //     },
+  //     {
+  //       code: 'ar',
+  //       file: 'ar.js'
+  //     }
+  //   ],
+  //   lazy: true,
+  //   langDir: 'lang/',
+  //   defaultLocale: 'en',
+  // },
   /*
    ** Build configuration
    */

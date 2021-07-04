@@ -72,6 +72,7 @@
 // import notify from "~/components/NotificationPlugin/Notifications.vue";
 export default {
   layout: "blank",
+  middleware: "autologin",
   data() {
     return {
       user: {

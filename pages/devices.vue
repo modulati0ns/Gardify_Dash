@@ -23,13 +23,13 @@
 
         <!-- Tabla de dispositivos -->
         <div class="row" id="tablaDevices">
-          <el-table :data="devices" id="tabla">
+          <el-table :data="$store.state.devices" id="tabla">
             <el-table-column min-width="20" aling="left" label="#">
               <div slot-scope="{row, $index}">
-                {{$index}}
+                {{$index+1}}
                 </div>
                 </el-table-column>
-            <el-table-column prop="id" min-width="50" aling="left" label="Numero de Serie"></el-table-column>
+            <el-table-column prop="deviceId" min-width="50" aling="left" label="Numero de Serie"></el-table-column>
             <el-table-column prop="deviceName" min-width="50" label="Nombre"></el-table-column>
             <el-table-column prop="deviceGroup" min-width="50"  label="Grupo"></el-table-column>
             <el-table-column align="center" min-width="50" label="Eliminar dispositivo">
@@ -118,8 +118,6 @@
       </card>
     </div>
 
-    <jaison :value="devices">
-    </jaison>
   </div>
   
   </div>
@@ -147,30 +145,65 @@ export default {
 
   data(){
     return{
-      devices: [
-        {
-          id: 234234,
-          deviceName: "Geranio",
-          deviceGroup: "Grupo 1"
-        },
-        {
-          id: 23334,
-          deviceName: "Girasol",
-          deviceGroup: "Grupo 2"
-        },
-        {
-          id: 2344,
-          deviceName: "Albahaca",
-          deviceGroup: "Grupo 1"
-        },
-      ]
     }
+  },
+  mounted() {
+    this.$store.dispatch("obtenerDispositivos");
   },
   methods: {
     // Metodo para eliminar dispositivo
     eliminarDispositivo(dispositivo){
-      console.log("Eliminando dispositivo " + dispositivo.id);
-    }
+
+
+      console.log("Eliminando dispositivo " + dispositivo.deviceId);
+
+      // La request ha de tener el token del usuario almacenado en el store y id del dispositivo que se ha de eliminar
+        const requestHeader = {
+            headers: {
+                'token': this.$store.state.user.token
+            },
+            params: {
+              'deviceId':  dispositivo.deviceId
+            }
+        };
+      
+
+      this.$axios
+            .delete("/gfyapiv1/devices", requestHeader)
+            .then((res) => {
+                // Si se ha eliminado correctamente
+                if (res.data.status = 'success') {
+
+                  // Mostramos notificacion de registro correcto
+                  this.$notify({
+                    verticalAlign: "bottom",
+                    horizontalAlign: "center",
+                    type: "success",
+                    icon: "tim-icons icon-check-2",
+                    message: "Dispositivo " + dispositivo.deviceName + " eliminado correctamente",
+                  });
+
+                  // Volvemos a obtener los dispositivos del usuario
+                  this.$store.dispatch("obtenerDispositivos");
+                    
+
+                } else {
+                  // Mostramos notificacion de registro correcto
+                  this.$notify({
+                    verticalAlign: "bottom",
+                    horizontalAlign: "center",
+                    type: "danger",
+                    icon: "tim-icons icon-check-2",
+                    message: "No se ha podido eliminar el dispositivo " + dispositivo.deviceName,
+                  });
+
+                  // Volvemos a obtener los dispositivos del usuario
+                  this.$store.dispatch("obtenerDispositivos");
+                }
+            });
+
+      
+    }, 
   }
 };
 </script>
