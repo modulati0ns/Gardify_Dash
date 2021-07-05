@@ -6,12 +6,23 @@
         <h2 class="card-title">Panel de control</h2>
       </div>
 
-      <div class="row plantStatusIndicators">
+      <!-- <div class="row plantStatusIndicators">
         <div class="col-3"><plant-status :config="config1"></plant-status></div>
         <div class="col-3"><plant-status :config="config2"></plant-status></div>
         <div class="col-3"><plant-status :config="config3"></plant-status></div>
         <div class="col-3"><plant-status :config="config4"></plant-status></div>
+      </div> -->
+
+      <div class="row plantStatusIndicators">
+        <div
+          class="col-3"
+          v-for="(widget, index) in plantStatusWidgets"
+          :key="index"
+        >
+          <plant-status :config="widget"></plant-status>
+        </div>
       </div>
+
       <button @click="sendDataToWidget()">PRUEVA</button>
       <card type="chart">
         <template slot="header">
@@ -364,38 +375,7 @@ export default {
         gradientColors: config.colors.primaryGradient,
         gradientStops: [1, 0.4, 0],
       },
-      config1: {
-        idUsuario: 1123,
-        idDispositivo: "1",
-        idPlanta: "1",
-        nombre: "Geranio",
-        temperatura: "",
-        humedad: 5,
-      },
-      config2: {
-        idUsuario: 1123,
-        idDispositivo: "1",
-        idPlanta: "2",
-        nombre: "Albahaca",
-        temperatura: "",
-        humedad: 5,
-      },
-      config3: {
-        idUsuario: 1123,
-        idDispositivo: "2",
-        idPlanta: "1",
-        nombre: "Camadorea",
-        temperatura: "",
-        humedad: "",
-      },
-      config4: {
-        idUsuario: 1123,
-        idDispositivo: "3",
-        idPlanta: "1",
-        nombre: "Rosa",
-        temperatura: "",
-        humedad: "5",
-      },
+      plantStatusWidgets: [],
     };
   },
   computed: {
@@ -424,6 +404,23 @@ export default {
       };
       this.$nuxt.$emit("gardify/1123/hash/1/2", dataToSend);
     },
+    getPlantWidgets() {
+      // La request ha de tener el token del usuario almacenado en el store
+      const requestHeader = {
+        headers: {
+          token: this.$store.state.user.token,
+        },
+      };
+      // Se hace la llamada a la API para obtener el array de plant widgets
+      this.$axios.get("/gfyapiv1/plantWidget", requestHeader).then((res) => {
+        // Si se ha recibido el array correctamente
+        if ((res.data.status = "success")) {
+          // Almacenemos en la variable plantStatusWidgets los resultados
+          this.plantStatusWidgets = res.data.plantWidgets;
+        }
+        console.log(this.plantStatusWidgets);
+      });
+    },
     initBigChart(index) {
       let chartData = {
         datasets: [
@@ -441,6 +438,7 @@ export default {
   },
   mounted() {
     this.initBigChart(0);
+    this.getPlantWidgets();
   },
 };
 </script>

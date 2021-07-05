@@ -1,8 +1,13 @@
 <template>
   <card class="plantStatus">
-    <template v-if="false">
+    <!-- Si no se encuentra un deviceId asociado al widget se muestra la vista de añadir planta -->
+    <template v-if="!config.deviceId">
       <div class="warnText">
-        <fa class="icon-status normal" :icon="['fas', 'plus']" />
+        <fa
+          class="icon-status normal"
+          @click="selectPlant()"
+          :icon="['fas', 'plus']"
+        />
         <h4 class="">Añade una planta</h4>
       </div>
     </template>
@@ -45,13 +50,13 @@ export default {
     const topic =
       "gardify" +
       "/" +
-      this.config.idUsuario +
+      this.config.userId +
       "/" +
       "hash" +
       "/" +
-      this.config.idDispositivo +
+      this.config.deviceId +
       "/" +
-      this.config.idPlanta;
+      this.config.plantId;
 
     this.$nuxt.$on(topic, this.updateValues);
   },
@@ -59,17 +64,20 @@ export default {
     const topic =
       "gardify" +
       "/" +
-      this.config.idUsuario +
+      this.config.userId +
       "/" +
       "hash" +
       "/" +
-      this.config.idDispositivo +
+      this.config.deviceId +
       "/" +
-      this.config.idPlanta;
+      this.config.plantId;
     // Desubscripcion a topico
     this.$nuxt.$off(topic, this.updateValues);
   },
   methods: {
+    selectPlant() {
+      console.log("pulso aqui");
+    },
     updateValues(data) {
       console.log(data);
       this.config.temperatura = data.temperatura;
@@ -109,6 +117,7 @@ export default {
 
 .icon-status.normal {
   color: var(--primary);
+  cursor: pointer;
 }
 
 .plantStatus {
