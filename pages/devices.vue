@@ -147,9 +147,7 @@ export default {
     return{
     }
   },
-  mounted() {
-    this.$store.dispatch("obtenerDispositivos");
-  },
+ 
   methods: {
     // Metodo para eliminar dispositivo
     eliminarDispositivo(dispositivo){

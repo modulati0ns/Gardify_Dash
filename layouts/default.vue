@@ -126,6 +126,7 @@ export default {
   },
   mounted() {
     this.initScrollbar();
+    this.$store.dispatch("obtenerDispositivos");
   },
 };
 </script>

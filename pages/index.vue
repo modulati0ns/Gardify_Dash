@@ -398,11 +398,15 @@ export default {
   },
   methods: {
     sendDataToWidget() {
+      console.log(this.plantStatusWidgets);
       const dataToSend = {
         temperatura: Math.round(Math.random() * (99 - 1) + 1, 5),
         humedad: Math.round(Math.random() * (100 - 1) + 1, 5),
       };
-      this.$nuxt.$emit("gardify/1123/hash/1/2", dataToSend);
+      this.$nuxt.$emit(
+        "gardify/60e359a12fa18312c496d7ba/hash/1232/2",
+        dataToSend
+      );
     },
     getPlantWidgets() {
       // La request ha de tener el token del usuario almacenado en el store
@@ -418,7 +422,6 @@ export default {
           // Almacenemos en la variable plantStatusWidgets los resultados
           this.plantStatusWidgets = res.data.plantWidgets;
         }
-        console.log(this.plantStatusWidgets);
       });
     },
     initBigChart(index) {
@@ -435,10 +438,37 @@ export default {
       this.bigLineChart.chartData = chartData;
       this.bigLineChart.activeIndex = index;
     },
+    updateAllWidgets() {
+      // La request ha de tener el token del usuario almacenado en el store
+      const requestHeader = {
+        headers: {
+          token: this.$store.state.user.token,
+        },
+      };
+
+      const requestBody = {
+        widget: this.plantStatusWidgets,
+      };
+
+      console.log(requestHeader);
+      // Se ha recebido la señal de guardar los widgets asi que se llama al endpoint para ello
+      this.$axios
+        .put("/gfyapiv1/plantWidget", requestBody, requestHeader)
+        .then((res) => {
+          // Si se ha recibido el array correctamente
+          if ((res.data.status = "success")) {
+            console.log("No se como he llegado hastya aqui pero ya esta");
+          }
+        });
+    },
   },
   mounted() {
     this.initBigChart(0);
     this.getPlantWidgets();
+    this.$nuxt.$on("gardify/widgetsHasBeenConfigured", this.updateAllWidgets);
+  },
+  beforeDestroy() {
+    this.$nuxt.$off("gardify/widgetsHasBeenConfigured", this.updateAllWidgets);
   },
 };
 </script>
