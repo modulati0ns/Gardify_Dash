@@ -61,14 +61,14 @@ router.post('/plantWidget', async (req, res) => {
             'description': 'Configuracion incial almacenada correctamente',
         })
 
-    } catch (err) {
+    } catch (error) {
 
         console.log("ERROR. No se ha podido configurar los widgets. Razon: " + err);
 
         // Devolucion de error 500 en el registro y el error para detectar si el email es unico
         res.status(500).json({
             'status:': 'fail',
-            'error': err
+            'error': error
         })
     }
 
@@ -92,7 +92,7 @@ router.get('/plantWidget', comprobacionToken, async (req, res) => {
             res.json({
                 'status': 'success',
                 'description': 'Se han encontrado el array de widgets',
-                'plantWidgets': plantWidgets[0].widgets
+                'widgets': plantWidgets[0].widgets
             })
         } else {
 
@@ -103,13 +103,12 @@ router.get('/plantWidget', comprobacionToken, async (req, res) => {
             })
         }
     } catch (error) {
-        res.json({
+        res.status(500).json({
             'status': 'fail',
             'error': error
         })
     }
 });
-
 
 // Endpoint para actualziar los widget. Se llama al pulsar el boton
 router.put('/plantWidget', comprobacionToken, async (req, res) => {
@@ -120,14 +119,14 @@ router.put('/plantWidget', comprobacionToken, async (req, res) => {
         const userId = req.userData._id;
 
         // Sacar el array datos del body
-        var widget = req.body.widget;
+        var widgets = req.body.widgets;
 
 
         // Insertar configuracion del Widget en la base de datos
         await plantWidgetModel.updateOne({
             'userId': userId
         }, {
-            'widgets': widget
+            'widgets': widgets
         });
 
         // TODO: Se deberia comprobar aqui si de verdad se ha creado lo de los widgets y sino hacer un rollback para eliminar el usuario
@@ -138,86 +137,77 @@ router.put('/plantWidget', comprobacionToken, async (req, res) => {
             'description': 'Se han actualizado los widgets correctamente',
         })
 
-    } catch (err) {
+    } catch (error) {
 
         console.log("ERROR. No se han podidoactualizarlos widgets. Razon: " + err);
 
         // Devolucion de error 500 en el registro y el error para detectar si el email es unico
         res.status(500).json({
             'status:': 'fail',
-            'error': err
+            'error': error
         })
     }
 
 });
 
+// Endpoint para actualziar los widget. Se llama al pulsar el boton
+router.delete('/plantWidget', comprobacionToken, async (req, res) => {
+    try {
 
-// // Endpoint de Login
-// router.post('/login', async (req, res) => {
-//     try {
 
-//         // Recogemos los datos de POST
-//         const userToLogin = req.body;
+        // Ahora que hemos confirmado que la request tiene un token valido, obtenemos su Id
+        const userId = req.userData._id;
 
-//         // Busqueda de usuario en la base de datos por email
-//         var foundUser = await userModel.findOne({
-//             email: userToLogin.email
-//         });
 
-//         // Si no se encuentra el usuario en la base de datos
-//         if (!foundUser) {
-//             throw "Login incorrecto";
+        // ME HE QUEDADO AQUI CON EL PROBELMA DE QUE SE HA METIDO UN STRING A LA BASE DE DATOS. A VER DESDE DONDE LLEGA Y SI EL JSON() LO SOLUCIONA
+        const widgets = []
+        const positions = []
+        for (var i = 0; i < 4; i++) {
+            widgets[i] = JSON.parse(req.query.widgets[i])
+            positions[i] = JSON.parse(req.query.positions[i])
+        }
 
-//             // Si se encuentra el usuario
-//         } else {
 
-//             // Comprobación de contraseña
-//             if (bcrypt.compareSync(userToLogin.password, foundUser.password)) {
-//                 // Contraseña correcta
+        // console.log("Me han llegado" + positions)
+        // console.log(req.query.widgets)
 
-//                 // Eliminamos la contraseña de la variable usuario encontrado para que no aaprezca en el token
-//                 foundUser.set('password', undefined, {
-//                     strict: false
-//                 });
-
-//                 // Generacion de token a partir de los datos del login
-//                 const token = jwt.sign({
-//                     userData: foundUser
-//                 }, 'GardiFYHaSH2021', {
-//                     expiresIn: 3600 * 24
-//                 });
-
-//                 // Si el token es correcto se inicia la sesión
-//                 if (token) {
-//                     console.log("Sesion iniciada correctamente");
-//                     // Devolucion de login correcto y token
-//                     return res.json({
-//                         'status': 'success',
-//                         'description': 'Sesion iniciada correctamente',
-//                         'token': token,
-//                         'userData': foundUser
-//                     });
-//                 }
+        for (var i = 0; i < widgets.length; i++) {
+            if (widgets[i].position == positions[i]) {
+                widgets[i].deviceId = "";
+                widgets[i].deviceName = "";
+                widgets[i].plantId = "";
+            }
+        }
+        console.log(widgets)
 
 
 
-//             } else {
-//                 // Contraseña incorrecta
-//                 throw "Login incorrecto";
-//             }
-//         }
-//     } catch (err) {
-//         console.log("Hubo un fallo en el inicio se sesion");
-//         res.status(401).json({
-//             'status': 'fail',
-//             'description': 'Hubo un fallo en el inicio de sesion',
-//             'error': err
-//         });
-//     }
+        // Insertar configuracion del Widget en la base de datos
+        await plantWidgetModel.updateOne({
+            'userId': userId
+        }, {
+            'widgets': widgets
+        });
 
-// });
+        // TODO: Se deberia comprobar aqui si de verdad se ha creado lo de los widgets y sino hacer un rollback para eliminar el usuario
+        console.log("Se han eliminado los widgets correctamente")
+        // Devolucion de usuario registrado correctamente
+        res.json({
+            'status': 'success',
+            'description': 'Se han eliminado los widgets correctamente',
+        })
 
+    } catch (error) {
 
+        console.log("ERROR. No se han podido eliminar los widgets. Razon: " + error);
 
+        // Devolucion de error 500 en el registro y el error para detectar si el email es unico
+        res.status(500).json({
+            'status:': 'fail',
+            'error': error
+        })
+    }
+
+});
 
 module.exports = router;

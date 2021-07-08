@@ -420,7 +420,7 @@ export default {
         // Si se ha recibido el array correctamente
         if ((res.data.status = "success")) {
           // Almacenemos en la variable plantStatusWidgets los resultados
-          this.plantStatusWidgets = res.data.plantWidgets;
+          this.plantStatusWidgets = res.data.widgets;
         }
       });
     },
@@ -447,17 +447,31 @@ export default {
       };
 
       const requestBody = {
-        widget: this.plantStatusWidgets,
+        widgets: this.plantStatusWidgets,
       };
 
-      console.log(requestHeader);
       // Se ha recebido la señal de guardar los widgets asi que se llama al endpoint para ello
       this.$axios
         .put("/gfyapiv1/plantWidget", requestBody, requestHeader)
         .then((res) => {
           // Si se ha recibido el array correctamente
           if ((res.data.status = "success")) {
-            console.log("No se como he llegado hastya aqui pero ya esta");
+            this.$notify({
+              verticalAlign: "bottom",
+              horizontalAlign: "center",
+              type: "success",
+              icon: "tim-icons icon-check-2",
+              message: "Se ha actualizado el widget correctamente.",
+            });
+          } else {
+            this.$notify({
+              verticalAlign: "bottom",
+              horizontalAlign: "center",
+              type: "danger",
+              icon: "tim-icons icon-alert-circle-exc",
+              message:
+                "No se ha podido actualizar el widget. Inténtelo de nuevo.",
+            });
           }
         });
     },

@@ -12,7 +12,8 @@ const plantDeviceSchema = new mongoose.Schema({
     // },
     userId: {
         type: String,
-        required: [true]
+        required: [true],
+        unique: true
     },
     // plantId: {
     //     type: String,
@@ -21,9 +22,8 @@ const plantDeviceSchema = new mongoose.Schema({
 
     widgets: {
         type: Array,
-        default: [
-
-        ]
+        required: [true],
+        default: []
     }
 
 });

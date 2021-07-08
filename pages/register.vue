@@ -101,9 +101,9 @@ export default {
       // LLamada a la API de registro enviando los datos obtenidos en el formulario
       this.$axios
         .post("/gfyapiv1/register", this.user)
-        .then((res1) => {
+        .then((res) => {
           // Comprobamos que el registro ha sido correcto
-          if (res1.data.status == "success") {
+          if (res.data.status == "success") {
             // Mostramos notificacion de registro correcto
             this.$notify({
               verticalAlign: "bottom",
@@ -120,7 +120,7 @@ export default {
             this.user.password = "";
 
             // Obtenemos el userId del usuario recien creado
-            const userIdData = { userId: res1.data.userId };
+            const userIdData = { userId: res.data.userId };
 
             // Si la persona se ha registrado de forma correcta, se procederá a crear la configuracion inicial de widgets
             this.$axios.post("/gfyapiv1/plantWidget", userIdData);

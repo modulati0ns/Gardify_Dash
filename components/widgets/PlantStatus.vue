@@ -60,6 +60,7 @@
     </template>
     <template v-else>
       <card class="plantStatus">
+        <fa class="close" :icon="['fas', 'times']" @click="deletePlant()" />
         <div slot="header">
           <h2 class="card-title">{{ config.nombre }}</h2>
         </div>
@@ -147,7 +148,7 @@ export default {
       const selectedCard = document.querySelectorAll(
         'div[position="' + this.config.position + '"]'
       );
-      console.log(selectedCard[0]);
+      // console.log(selectedCard[0]);
       selectedCard[0].classList.toggle("is-flipped");
     },
     // Metodo para actualizar el dispositivo asociado al widget
@@ -162,6 +163,13 @@ export default {
       // this.config.plantId = deviceFound.deviceId; //TODO: Posible implementacion futura de PlantId
 
       // Se emite el mensaje al index de que se han de guardar todos los datos
+      this.$nuxt.$emit("gardify/widgetsHasBeenConfigured");
+    },
+    deletePlant() {
+      // Se borran las variables del config y se manda la orden de actualizar la bbdd
+      this.config.nombre = "";
+      this.config.deviceId = "";
+      this.config.plantId = "";
       this.$nuxt.$emit("gardify/widgetsHasBeenConfigured");
     },
     // Metodo para actualizar los valores del widget

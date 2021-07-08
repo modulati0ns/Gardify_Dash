@@ -9,7 +9,7 @@ let comprobacionToken = (req, res, next) => {
 
         // Si hay error de comprobacion de firma o la firma no es correcta
         if (err) {
-            console.log("Error: " + err);
+            console.log("Error en autenticacion: " + err);
             return res.status(401).json({
                 status: 'fail',
                 error: err
