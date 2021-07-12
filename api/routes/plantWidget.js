@@ -158,8 +158,6 @@ router.delete('/plantWidget', comprobacionToken, async (req, res) => {
         // Ahora que hemos confirmado que la request tiene un token valido, obtenemos su Id
         const userId = req.userData._id;
 
-
-        // ME HE QUEDADO AQUI CON EL PROBELMA DE QUE SE HA METIDO UN STRING A LA BASE DE DATOS. A VER DESDE DONDE LLEGA Y SI EL JSON() LO SOLUCIONA
         const widgets = []
         const positions = []
         for (var i = 0; i < 4; i++) {
