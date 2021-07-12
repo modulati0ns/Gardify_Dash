@@ -4,6 +4,7 @@
 export const state = () => ({
     user: null,
     devices: [],
+    widgets: [],
 });
 
 /* No se puede modificar directamente los valores del estado
@@ -17,7 +18,35 @@ export const mutations = {
     },
     setDevices(state, devices) {
         state.devices = devices;
+    },
+    setWidgets(state, widgets) {
+        state.widgets = widgets;
+    },
+    setConfig(state, widgetOptions) {
+        console.log(widgetOptions)
+
+        var postion = widgetOptions.position
+        var widget = {
+            'nombre': widgetOptions.deviceFound.deviceName,
+            'deviceId': widgetOptions.deviceFound.deviceId,
+            'position': widgetOptions.position,
+            'plantId': ""
+        }
+        state.widgets[postion - 1] = widget;
     }
+}
+
+export const getters = {
+    getUser(state) {
+        return state.user;
+    },
+    getDevices(state) {
+        return state.devices;
+    },
+    getWidgets(state) {
+        return state.widgets;
+    },
+
 }
 
 // Aciones = Mutaciones + Funciones
@@ -58,5 +87,41 @@ export const actions = {
                     this.commit('setDevices', res.data.devices);
                 }
             });
+    },
+    obtenerWidgets() {
+        // La request ha de tener el token del usuario almacenado en el store
+        const requestHeader = {
+            headers: {
+                'token': this.state.user.token,
+            },
+        };
+        // Se hace la llamada a la API para obtener el array de plant widgets
+        this.$axios.get("/gfyapiv1/plantWidget", requestHeader).then((res) => {
+            // Si se ha recibido el array correctamente
+            if (res.data.status = 'success') {
+
+                var widgets = [];
+                for (var i = 0; i < res.data.widgets.length; i++) {
+
+                    widgets[i] = res.data.widgets[i];
+
+                }
+
+                console.log(widgets)
+                // Almacenemos en la variable plantStatusWidgets los resultados
+                this.commit('setWidgets', widgets);
+            }
+        });
+    },
+    guardarWidget(context, payload) {
+        // A esta funcion le llegara un config de un widget concreto. 
+        // Desde aqui lo meteremos en el widget global.
+
+        const widgets = this.getters.getWidgets
+        console.log(widgets)
+        // this.state.widgets[payload.position-1] = payload
+        // commit('')
+
     }
+
 }

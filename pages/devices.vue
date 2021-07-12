@@ -21,7 +21,7 @@
 
           <!-- Tabla de dispositivos -->
           <div class="row" id="tablaDevices">
-            <el-table :data="$store.state.devices" id="tabla">
+            <el-table :data="getDevices" id="tabla">
               <el-table-column min-width="20" aling="left" label="#">
                 <div slot-scope="{ $index }">
                   {{ $index + 1 }}
@@ -156,6 +156,7 @@ import { Table, TableColumn } from "element-ui";
 import { Select, Option } from "element-ui";
 import BaseButton from "~/components/BaseButton.vue";
 import jaison from "~/components/jaison.vue";
+import { mapGetters } from "vuex";
 
 export default {
   components: {
@@ -177,7 +178,10 @@ export default {
       },
     };
   },
-
+  computed: {
+    // Getters
+    ...mapGetters(["getDevices"]),
+  },
   methods: {
     // Metodo para eliminar dispositivo
     eliminarDispositivo(dispositivo) {

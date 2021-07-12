@@ -1,9 +1,9 @@
 <template>
   <div class="container">
     <!-- Si no se encuentra un deviceId asociado al widget se muestra la vista de añadir planta -->
-    <template v-if="!config.deviceId">
+    <template v-if="!configWidget.deviceId">
       <div class="plantStatus">
-        <div class="card-container" :position="config.position">
+        <div class="card-container" :position="configWidget.position">
           <!-- Aqui dentro se hace el flip de la card -->
           <card class="plantStatus-front">
             <div class="warnText">
@@ -36,7 +36,7 @@
               >
                 <el-option
                   class="text-dark"
-                  v-for="device in this.$store.state.devices"
+                  v-for="device in getDevices"
                   :key="device.deviceId"
                   :label="device.deviceName"
                   :value="device.deviceId"
@@ -62,7 +62,7 @@
       <card class="plantStatus">
         <fa class="close" :icon="['fas', 'times']" @click="deletePlant()" />
         <div slot="header">
-          <h2 class="card-title">{{ config.nombre }}</h2>
+          <h2 class="card-title">{{ configWidget.nombre }}</h2>
         </div>
         <div class="iconStatus">
           <!-- <i class="tim-icons icon-satisfied icon-status"></i> -->
@@ -93,6 +93,7 @@ import BaseInput from "~/components/Inputs/BaseInput.vue";
 import { Table, TableColumn } from "element-ui";
 import { Select, Option } from "element-ui";
 import BaseButton from "~/components/BaseButton.vue";
+import { mapGetters, mapActions, mapMutations } from "vuex";
 
 export default {
   components: {
@@ -128,6 +129,16 @@ export default {
 
     this.$nuxt.$on(topic, this.updateValues);
   },
+  computed: {
+    // Getters
+    ...mapGetters(["getDevices", "getWidgets"]),
+    // ...mapActions(["guardarWidget"]),
+    ...mapMutations(["setConfig"]),
+
+    configWidget() {
+      return this.$store.state.widgets[this.config.position - 1];
+    },
+  },
   beforeDestroy() {
     const topic =
       "gardify" +
@@ -154,16 +165,68 @@ export default {
     // Metodo para actualizar el dispositivo asociado al widget
     updatePlant() {
       // A partir del Id seleccionado en el widget, se busca el dispositicvo completo en el state del store
-      const deviceFound = this.$store.state.devices.find(
+      const deviceFound = this.getDevices.find(
         (device) => device.deviceId == this.selectedDeviceId
       );
-      // Se rellena el objeto de config con los valores correctos
-      this.config.nombre = deviceFound.deviceName;
-      this.config.deviceId = deviceFound.deviceId;
-      // this.config.plantId = deviceFound.deviceId; //TODO: Posible implementacion futura de PlantId
 
+      // Se rellena el objeto de config con los valores correctos
+      // this.config.nombre = deviceFound.deviceName;
+      // this.config.deviceId = deviceFound.deviceId;
+      var widgetOptions = {
+        position: this.config.position,
+        deviceFound: deviceFound,
+      };
+      console.log(widgetOptions);
+      this.$store.commit("setConfig", widgetOptions);
+
+      /* ME HE QUEDADO AQUI. HAY QUE:
+    1º HACER QUE LA REQUEST POR AXIOS DE ABAJO EN LA QUE SE ACTUALIZA SEA MAS LIMPIA (MIDDLEWARE O ACTIONS)
+    2º CONSEGUIR QUE SE ACTUALICE AUTOMATICAMENTE EÑ CMPONENTE CUANDO SE SELECCIONA EL DISPOSITIVO
+    */
+      // La request ha de tener el token del usuario almacenado en el store
+      const requestHeader = {
+        headers: {
+          token: this.$store.state.user.token,
+        },
+      };
+
+      const requestBody = {
+        widgets: this.$store.state.widgets,
+      };
+
+      // Se ha recebido la señal de guardar los widgets asi que se llama al endpoint para ello
+      this.$axios
+        .put("/gfyapiv1/plantWidget", requestBody, requestHeader)
+        .then((res) => {
+          // Si se ha recibido el array correctamente
+          if ((res.data.status = "success")) {
+            this.$notify({
+              verticalAlign: "bottom",
+              horizontalAlign: "center",
+              type: "success",
+              icon: "tim-icons icon-check-2",
+              message: "Se ha actualizado el widget correctamente.",
+            });
+          } else {
+            this.$notify({
+              verticalAlign: "bottom",
+              horizontalAlign: "center",
+              type: "danger",
+              icon: "tim-icons icon-alert-circle-exc",
+              message:
+                "No se ha podido actualizar el widget. Inténtelo de nuevo.",
+            });
+          }
+        });
+
+      this.$store.dispatch("obtenerDispositivos");
+      this.getWidgets;
+      // this.config.plantId = deviceFound.deviceId; //TODO: Posible implementacion futura de PlantId
+      // this.$store.getters.getDevices;
+      // this.guardarWidget({ mensaje: "hola" });
+      // this.$store.dispatch("guardarWidget", this.config);
       // Se emite el mensaje al index de que se han de guardar todos los datos
-      this.$nuxt.$emit("gardify/widgetsHasBeenConfigured");
+      // this.$nuxt.$emit("gardify/widgetsHasBeenConfigured");
     },
     deletePlant() {
       // Se borran las variables del config y se manda la orden de actualizar la bbdd

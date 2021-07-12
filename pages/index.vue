@@ -14,11 +14,7 @@
       </div> -->
 
       <div class="row plantStatusIndicators">
-        <div
-          class="col-3"
-          v-for="(widget, index) in plantStatusWidgets"
-          :key="index"
-        >
+        <div class="col-3" v-for="(widget, index) in getWidgets" :key="index">
           <plant-status :config="widget"></plant-status>
         </div>
       </div>
@@ -199,6 +195,7 @@ import TaskList from "@/components/Dashboard/TaskList";
 import config from "@/config";
 import { Table, TableColumn } from "element-ui";
 import PlantStatus from "~/components/widgets/PlantStatus.vue";
+import { mapGetters } from "vuex";
 
 let bigChartData = [
   [100, 70, 90, 70, 85, 60, 75, 60, 90, 80, 110, 100],
@@ -395,6 +392,7 @@ export default {
         { name: "Sessions", icon: "tim-icons icon-tap-02" },
       ];
     },
+    ...mapGetters(["getWidgets"]),
   },
   methods: {
     sendDataToWidget() {
@@ -407,22 +405,6 @@ export default {
         "gardify/60e359a12fa18312c496d7ba/hash/1232/2",
         dataToSend
       );
-    },
-    getPlantWidgets() {
-      // La request ha de tener el token del usuario almacenado en el store
-      const requestHeader = {
-        headers: {
-          token: this.$store.state.user.token,
-        },
-      };
-      // Se hace la llamada a la API para obtener el array de plant widgets
-      this.$axios.get("/gfyapiv1/plantWidget", requestHeader).then((res) => {
-        // Si se ha recibido el array correctamente
-        if ((res.data.status = "success")) {
-          // Almacenemos en la variable plantStatusWidgets los resultados
-          this.plantStatusWidgets = res.data.widgets;
-        }
-      });
     },
     initBigChart(index) {
       let chartData = {
@@ -478,8 +460,8 @@ export default {
   },
   mounted() {
     this.initBigChart(0);
-    this.getPlantWidgets();
-    this.$nuxt.$on("gardify/widgetsHasBeenConfigured", this.updateAllWidgets);
+    this.$store.dispatch("obtenerWidgets");
+    // this.$nuxt.$on("gardify/widgetsHasBeenConfigured", this.updateAllWidgets);
   },
   beforeDestroy() {
     this.$nuxt.$off("gardify/widgetsHasBeenConfigured", this.updateAllWidgets);
