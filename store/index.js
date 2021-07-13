@@ -22,18 +22,12 @@ export const mutations = {
     setWidgets(state, widgets) {
         state.widgets = widgets;
     },
-    setConfig(state, widgetOptions) {
-        console.log(widgetOptions)
-
-        var postion = widgetOptions.position
-        var widget = {
-            'nombre': widgetOptions.deviceFound.deviceName,
-            'deviceId': widgetOptions.deviceFound.deviceId,
-            'position': widgetOptions.position,
-            'plantId': ""
-        }
-        state.widgets[postion - 1] = widget;
+    setWidget(state, payload) {
+        /* Actualizar un indice de un array no es reactivo en Vue, pero mediante la
+            funcion Vue.$set, se consigue esta reactividad */
+        this._vm.$set(state.widgets, payload.position - 1, payload)
     }
+
 }
 
 export const getters = {
@@ -107,21 +101,115 @@ export const actions = {
 
                 }
 
-                console.log(widgets)
                 // Almacenemos en la variable plantStatusWidgets los resultados
                 this.commit('setWidgets', widgets);
             }
         });
     },
-    guardarWidget(context, payload) {
-        // A esta funcion le llegara un config de un widget concreto. 
-        // Desde aqui lo meteremos en el widget global.
+    guardarWidget(context, widgetOptions) {
 
-        const widgets = this.getters.getWidgets
-        console.log(widgets)
-        // this.state.widgets[payload.position-1] = payload
-        // commit('')
+
+        // La request ha de tener el token del usuario almacenado en el store
+        const requestHeader = {
+            headers: {
+                token: this.state.user.token,
+            },
+        };
+
+        // Se configura el objeto que contiene los datos del nuevo widger
+        const newWidget = {
+            "deviceId": widgetOptions.deviceFound.deviceId,
+            "nombre": widgetOptions.deviceFound.deviceName,
+            "plantId": "",
+            "position": widgetOptions.position
+        }
+
+
+        // Se añade el objeto a la posicion que le corresponda dentro del array de widgets
+        this.commit('setWidget', newWidget);
+
+        // Se forma el cuerpo del request con el nuevo array de widgets formado
+        const requestBody = {
+            widgets: this.state.widgets,
+        };
+
+        // Se ha recebido la señal de guardar los widgets asi que se llama al endpoint para ello
+        this.$axios
+            .put("/gfyapiv1/plantWidget", requestBody, requestHeader)
+            .then((res) => {
+                // Si se ha recibido el array correctamente
+                if ((res.data.status = "success")) {
+                    this._vm.$notify({
+                        verticalAlign: "bottom",
+                        horizontalAlign: "center",
+                        type: "success",
+                        icon: "tim-icons icon-check-2",
+                        message: "Se ha actualizado el widget correctamente.",
+                    });
+                } else {
+                    this._vm.$notify({
+                        verticalAlign: "bottom",
+                        horizontalAlign: "center",
+                        type: "danger",
+                        icon: "tim-icons icon-alert-circle-exc",
+                        message: "No se ha podido actualizar el widget. Inténtelo de nuevo.",
+                    });
+                }
+            });
+
+
+
+    },
+    eliminarWidget(context, widgetOptions) {
+        // La request ha de tener el token del usuario almacenado en el store
+        const requestHeader = {
+            headers: {
+                token: this.state.user.token,
+            },
+        };
+
+        // Se configura el objeto que contiene los datos del nuevo widger
+        const newWidget = {
+            "deviceId": "",
+            "nombre": "",
+            "plantId": "",
+            "position": widgetOptions.position
+        }
+
+
+        // Se añade el objeto a la posicion que le corresponda dentro del array de widgets
+        this.commit('setWidget', newWidget);
+
+        // Se forma el cuerpo del request con el nuevo array de widgets formado
+        const requestBody = {
+            widgets: this.state.widgets,
+        };
+
+        // Se ha recebido la señal de guardar los widgets asi que se llama al endpoint para ello
+        this.$axios
+            .put("/gfyapiv1/plantWidget", requestBody, requestHeader)
+            .then((res) => {
+                // Si se ha recibido el array correctamente
+                if ((res.data.status = "success")) {
+                    this._vm.$notify({
+                        verticalAlign: "bottom",
+                        horizontalAlign: "center",
+                        type: "success",
+                        icon: "tim-icons icon-check-2",
+                        message: "Se ha eliminado el widget correctamente.",
+                    });
+                } else {
+                    this._vm.$notify({
+                        verticalAlign: "bottom",
+                        horizontalAlign: "center",
+                        type: "danger",
+                        icon: "tim-icons icon-alert-circle-exc",
+                        message: "No se ha podido eliminar el widget. Inténtelo de nuevo.",
+                    });
+                }
+            });
+
+
 
     }
-
 }

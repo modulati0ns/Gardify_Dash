@@ -1,9 +1,12 @@
 <template>
   <div class="container">
     <!-- Si no se encuentra un deviceId asociado al widget se muestra la vista de añadir planta -->
-    <template v-if="!configWidget.deviceId">
+    <template v-if="!getWidgets[config.position - 1].deviceId">
       <div class="plantStatus">
-        <div class="card-container" :position="configWidget.position">
+        <div
+          class="card-container"
+          :position="getWidgets[config.position - 1].position"
+        >
           <!-- Aqui dentro se hace el flip de la card -->
           <card class="plantStatus-front">
             <div class="warnText">
@@ -62,7 +65,9 @@
       <card class="plantStatus">
         <fa class="close" :icon="['fas', 'times']" @click="deletePlant()" />
         <div slot="header">
-          <h2 class="card-title">{{ configWidget.nombre }}</h2>
+          <h2 class="card-title">
+            {{ getWidgets[config.position - 1].nombre }}
+          </h2>
         </div>
         <div class="iconStatus">
           <!-- <i class="tim-icons icon-satisfied icon-status"></i> -->
@@ -93,7 +98,7 @@ import BaseInput from "~/components/Inputs/BaseInput.vue";
 import { Table, TableColumn } from "element-ui";
 import { Select, Option } from "element-ui";
 import BaseButton from "~/components/BaseButton.vue";
-import { mapGetters, mapActions, mapMutations } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
   components: {
@@ -105,8 +110,10 @@ export default {
     [Option.name]: Option,
     [Select.name]: Select,
   },
-  //   Propiedades que han de entrar al objeto
+
+  // Propiedades que han de entrar al objeto
   props: ["config"],
+
   data() {
     return {
       temperatura: 0,
@@ -114,6 +121,7 @@ export default {
       selectedDeviceId: "",
     };
   },
+
   mounted() {
     // Topico al que nos vamos a subscribir
     const topic =
@@ -126,19 +134,14 @@ export default {
       this.config.deviceId +
       "/" +
       this.config.plantId;
-
     this.$nuxt.$on(topic, this.updateValues);
   },
+
   computed: {
     // Getters
     ...mapGetters(["getDevices", "getWidgets"]),
-    // ...mapActions(["guardarWidget"]),
-    ...mapMutations(["setConfig"]),
-
-    configWidget() {
-      return this.$store.state.widgets[this.config.position - 1];
-    },
   },
+
   beforeDestroy() {
     const topic =
       "gardify" +
@@ -153,15 +156,16 @@ export default {
     // Desubscripcion a topico
     this.$nuxt.$off(topic, this.updateValues);
   },
+
   methods: {
     // Metodo para hacer flip al card
     selectPlant() {
       const selectedCard = document.querySelectorAll(
         'div[position="' + this.config.position + '"]'
       );
-      // console.log(selectedCard[0]);
       selectedCard[0].classList.toggle("is-flipped");
     },
+
     // Metodo para actualizar el dispositivo asociado al widget
     updatePlant() {
       // A partir del Id seleccionado en el widget, se busca el dispositicvo completo en el state del store
@@ -169,78 +173,33 @@ export default {
         (device) => device.deviceId == this.selectedDeviceId
       );
 
-      // Se rellena el objeto de config con los valores correctos
-      // this.config.nombre = deviceFound.deviceName;
-      // this.config.deviceId = deviceFound.deviceId;
-      var widgetOptions = {
+      // Se rellena el objeto widgetOptions con los valores correctos
+      const widgetOptions = {
         position: this.config.position,
         deviceFound: deviceFound,
       };
-      console.log(widgetOptions);
-      this.$store.commit("setConfig", widgetOptions);
 
-      /* ME HE QUEDADO AQUI. HAY QUE:
-    1º HACER QUE LA REQUEST POR AXIOS DE ABAJO EN LA QUE SE ACTUALIZA SEA MAS LIMPIA (MIDDLEWARE O ACTIONS)
-    2º CONSEGUIR QUE SE ACTUALICE AUTOMATICAMENTE EÑ CMPONENTE CUANDO SE SELECCIONA EL DISPOSITIVO
-    */
-      // La request ha de tener el token del usuario almacenado en el store
-      const requestHeader = {
-        headers: {
-          token: this.$store.state.user.token,
-        },
-      };
-
-      const requestBody = {
-        widgets: this.$store.state.widgets,
-      };
-
-      // Se ha recebido la señal de guardar los widgets asi que se llama al endpoint para ello
-      this.$axios
-        .put("/gfyapiv1/plantWidget", requestBody, requestHeader)
-        .then((res) => {
-          // Si se ha recibido el array correctamente
-          if ((res.data.status = "success")) {
-            this.$notify({
-              verticalAlign: "bottom",
-              horizontalAlign: "center",
-              type: "success",
-              icon: "tim-icons icon-check-2",
-              message: "Se ha actualizado el widget correctamente.",
-            });
-          } else {
-            this.$notify({
-              verticalAlign: "bottom",
-              horizontalAlign: "center",
-              type: "danger",
-              icon: "tim-icons icon-alert-circle-exc",
-              message:
-                "No se ha podido actualizar el widget. Inténtelo de nuevo.",
-            });
-          }
-        });
-
-      this.$store.dispatch("obtenerDispositivos");
-      this.getWidgets;
-      // this.config.plantId = deviceFound.deviceId; //TODO: Posible implementacion futura de PlantId
-      // this.$store.getters.getDevices;
-      // this.guardarWidget({ mensaje: "hola" });
-      // this.$store.dispatch("guardarWidget", this.config);
-      // Se emite el mensaje al index de que se han de guardar todos los datos
-      // this.$nuxt.$emit("gardify/widgetsHasBeenConfigured");
+      // Se llama a la action guardarWidget
+      this.$store.dispatch("guardarWidget", widgetOptions);
     },
+
+    // Metodo para eliminar un widget
     deletePlant() {
-      // Se borran las variables del config y se manda la orden de actualizar la bbdd
-      this.config.nombre = "";
-      this.config.deviceId = "";
-      this.config.plantId = "";
-      this.$nuxt.$emit("gardify/widgetsHasBeenConfigured");
+      // Body de la action
+      const widgetOptions = {
+        position: this.config.position,
+      };
+
+      // Se llama a la action eliminarWidget
+      this.$store.dispatch("eliminarWidget", widgetOptions);
     },
+
     // Metodo para actualizar los valores del widget
     updateValues(data) {
-      // console.log(data);
       this.temperatura = data.temperatura;
       this.humedad = data.humedad;
     },
+
     // Seleccion del color del icono de la cara segun la temperatura etc
     faceColorAndIcon() {
       if (this.temperatura <= 20) {

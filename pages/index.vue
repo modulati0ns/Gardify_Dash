@@ -6,13 +6,6 @@
         <h2 class="card-title">Panel de control</h2>
       </div>
 
-      <!-- <div class="row plantStatusIndicators">
-        <div class="col-3"><plant-status :config="config1"></plant-status></div>
-        <div class="col-3"><plant-status :config="config2"></plant-status></div>
-        <div class="col-3"><plant-status :config="config3"></plant-status></div>
-        <div class="col-3"><plant-status :config="config4"></plant-status></div>
-      </div> -->
-
       <div class="row plantStatusIndicators">
         <div class="col-3" v-for="(widget, index) in getWidgets" :key="index">
           <plant-status :config="widget"></plant-status>
@@ -187,6 +180,7 @@
     </div>
   </div>
 </template>
+
 <script>
 import LineChart from "@/components/Charts/LineChart";
 import BarChart from "@/components/Charts/BarChart";
@@ -396,13 +390,12 @@ export default {
   },
   methods: {
     sendDataToWidget() {
-      console.log(this.plantStatusWidgets);
       const dataToSend = {
         temperatura: Math.round(Math.random() * (99 - 1) + 1, 5),
         humedad: Math.round(Math.random() * (100 - 1) + 1, 5),
       };
       this.$nuxt.$emit(
-        "gardify/60e359a12fa18312c496d7ba/hash/1232/2",
+        "gardify/60e359a12fa18312c496d7ba/hash/sensuia/a",
         dataToSend
       );
     },
