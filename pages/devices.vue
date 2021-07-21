@@ -43,6 +43,10 @@
                 min-width="50"
                 label="Grupo"
               ></el-table-column> -->
+
+              <el-table-column min-width="50" label="Activacion">
+              </el-table-column>
+
               <el-table-column
                 align="center"
                 min-width="50"
@@ -64,6 +68,10 @@
                       <i class="tim-icons icon-simple-remove"></i>
                     </base-button>
                   </el-tooltip>
+                  <base-switch
+                    @click="updateSaverRuleStatus"
+                    v-model="status"
+                  ></base-switch>
                 </div>
               </el-table-column>
             </el-table>
@@ -154,15 +162,17 @@ import Card from "~/components/Cards/Card.vue";
 import BaseInput from "~/components/Inputs/BaseInput.vue";
 import { Table, TableColumn } from "element-ui";
 import { Select, Option } from "element-ui";
-import BaseButton from "~/components/BaseButton.vue";
+// import BaseButton from "~/components/BaseButton.vue";
+// import BaseSwitch from "~/components/BaseSwitch.vue";
 import jaison from "~/components/jaison.vue";
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
   components: {
     Card,
-    BaseInput,
-    BaseButton,
+    // BaseInput,
+    // BaseButton,
+    // BaseSwitch,
     [Table.name]: Table,
     [TableColumn.name]: TableColumn,
     [Option.name]: Option,
@@ -176,6 +186,7 @@ export default {
         deviceName: "",
         deviceId: "",
       },
+      status: true,
     };
   },
   computed: {
@@ -183,6 +194,7 @@ export default {
     ...mapGetters(["getDevices"]),
   },
   methods: {
+    ...mapActions(["obtenerDispositivos"]),
     // Metodo para eliminar dispositivo
     eliminarDispositivo(dispositivo) {
       // La request ha de tener el token del usuario almacenado en el store y id del dispositivo que se ha de eliminar
@@ -325,6 +337,55 @@ export default {
             this.$store.dispatch("obtenerDispositivos");
           }
         });
+    },
+    updateSaverRuleStatus() {
+      console.log("ahora si");
+      // try {
+      //   // Hacemos una copia de la variable para no depender de la store
+      //   let deviceCopy = JSON.parse(JSON.stringify(rule));
+
+      //   // Invertimos el estado actual del boton
+      //   deviceCopy.status = !deviceCopy.status;
+
+      //   let data = {
+      //     newSaverRule: rule,
+      //     userId: this.g
+      //   };
+
+      //   let headers = {
+      //     headers: {
+      //       token: this.$store.state.user.token,
+      //     },
+      //   };
+
+      //   // Llamada a API de GFY para actualizar el deviceSaverRule
+      //   this.$axios
+      //     .put("/gfyapiv1/deviceSaverRule", data, headers)
+      //     .then((res) => {
+      //       if (res.data.status == "success") {
+      //         // Si todo ha salido bien se vuelven a obtener los dispositivos
+      //         this.obtenerDispositivos;
+
+      //         // this.$notify({
+      //         //   verticalAlign: "bottom",
+      //         //   horizontalAlign: "center",
+      //         //   type: "success",
+      //         //   icon: "tim-icons icon-check-2",
+      //         //   message: "Se actualizó el estado del dispositivo correctamente",
+      //         // });
+      //       }
+      //     });
+      // } catch (error) {
+      //   // Se muestra un error
+      //   this.$notify({
+      //     verticalAlign: "bottom",
+      //     horizontalAlign: "center",
+      //     type: "fail",
+      //     icon: "tim-icons icon-check-2",
+      //     message:
+      //       "No se pudo actualizar el estado del dispositivo correctamente",
+      //   });
+      // }
     },
   },
 };

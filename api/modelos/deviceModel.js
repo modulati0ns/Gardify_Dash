@@ -16,11 +16,11 @@ const deviceSchema = new mongoose.Schema({
         type: String,
         required: [true]
     },
-    activo: {
-        type: Boolean,
-        required: [true],
-        default: true
-    },
+    // activo: {
+    //     type: Boolean,
+    //     required: [true],
+    //     default: true
+    // },
     createdTime: {
         type: Number
     },

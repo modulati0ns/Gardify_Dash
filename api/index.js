@@ -16,7 +16,8 @@ api.use("/gfyapiv1", require("./routes/devices.js"));
 api.use("/gfyapiv1", require("./routes/users.js"));
 api.use("/gfyapiv1", require("./routes/auth.js"));
 api.use("/gfyapiv1", require("./routes/plantWidget.js"));
-
+api.use("/gfyapiv1", require("./routes/toEmqx.js"));
+api.use("/gfyapiv1", require("./routes/fromEmqx.js"));
 
 // Linea para modulos por partes
 module.exports = api;
