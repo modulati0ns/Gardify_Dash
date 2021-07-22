@@ -45,6 +45,12 @@
               ></el-table-column> -->
 
               <el-table-column min-width="50" label="Activacion">
+                <div slot-scope="{ row }">
+                  <base-switch
+                    @click="updateSaverRuleStatus(row)"
+                    v-model="status"
+                  ></base-switch>
+                </div>
               </el-table-column>
 
               <el-table-column
@@ -68,10 +74,6 @@
                       <i class="tim-icons icon-simple-remove"></i>
                     </base-button>
                   </el-tooltip>
-                  <base-switch
-                    @click="updateSaverRuleStatus"
-                    v-model="status"
-                  ></base-switch>
                 </div>
               </el-table-column>
             </el-table>
@@ -338,54 +340,55 @@ export default {
           }
         });
     },
-    updateSaverRuleStatus() {
-      console.log("ahora si");
-      // try {
-      //   // Hacemos una copia de la variable para no depender de la store
-      //   let deviceCopy = JSON.parse(JSON.stringify(rule));
+    updateSaverRuleStatus(device) {
+      console.log(device);
+      try {
+        // Hacemos una copia de la variable para no depender de la store
+        let deviceCopy = JSON.parse(JSON.stringify(device));
 
-      //   // Invertimos el estado actual del boton
-      //   deviceCopy.status = !deviceCopy.status;
+        // Invertimos el estado actual del boton
+        deviceCopy.saverRule.status = !deviceCopy.saverRule.status;
 
-      //   let data = {
-      //     newSaverRule: rule,
-      //     userId: this.g
-      //   };
+        let requestBody = {
+          newSaverRule: deviceCopy.saverRule,
+        };
 
-      //   let headers = {
-      //     headers: {
-      //       token: this.$store.state.user.token,
-      //     },
-      //   };
+        let requestHeader = {
+          headers: {
+            token: this.$store.state.user.token,
+          },
+        };
 
-      //   // Llamada a API de GFY para actualizar el deviceSaverRule
-      //   this.$axios
-      //     .put("/gfyapiv1/deviceSaverRule", data, headers)
-      //     .then((res) => {
-      //       if (res.data.status == "success") {
-      //         // Si todo ha salido bien se vuelven a obtener los dispositivos
-      //         this.obtenerDispositivos;
+        console.log(requestBody);
+        // Llamada a API de GFY para actualizar el deviceSaverRule
+        this.$axios
+          .put("/gfyapiv1/deviceSaverRule", requestBody, requestHeader)
+          .then((res) => {
+            if (res.data.status == "success") {
+              // Si todo ha salido bien se vuelven a obtener los dispositivos
+              this.$store.dispatch("obtenerDispositivos");
 
-      //         // this.$notify({
-      //         //   verticalAlign: "bottom",
-      //         //   horizontalAlign: "center",
-      //         //   type: "success",
-      //         //   icon: "tim-icons icon-check-2",
-      //         //   message: "Se actualizó el estado del dispositivo correctamente",
-      //         // });
-      //       }
-      //     });
-      // } catch (error) {
-      //   // Se muestra un error
-      //   this.$notify({
-      //     verticalAlign: "bottom",
-      //     horizontalAlign: "center",
-      //     type: "fail",
-      //     icon: "tim-icons icon-check-2",
-      //     message:
-      //       "No se pudo actualizar el estado del dispositivo correctamente",
-      //   });
-      // }
+              // this.$notify({
+              //   verticalAlign: "bottom",
+              //   horizontalAlign: "center",
+              //   type: "success",
+              //   icon: "tim-icons icon-check-2",
+              //   message: "Se actualizó el estado del dispositivo correctamente",
+              // });
+            }
+          });
+      } catch (error) {
+        console.log(error);
+        // Se muestra un error
+        this.$notify({
+          verticalAlign: "bottom",
+          horizontalAlign: "center",
+          type: "fail",
+          icon: "tim-icons icon-check-2",
+          message:
+            "No se pudo actualizar el estado del dispositivo correctamente",
+        });
+      }
     },
   },
 };
