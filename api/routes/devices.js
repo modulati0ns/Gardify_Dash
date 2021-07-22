@@ -23,6 +23,7 @@ import saverRuleModel from '../modelos/saverRuleModel.js'
 // Leer informacion de uno o varios dispositivos
 router.get("/devices", comprobacionToken, async (req, res) => {
     try {
+        console.log("[INFO]".magenta + "[Devices] ".blue + "Obteniendo informacion de los dispositivos ");
 
         // Ahora que hemos confirmado que la request tiene un token valido, listamos los usuarios de este usuario
         const userId = req.userData._id;
@@ -47,25 +48,25 @@ router.get("/devices", comprobacionToken, async (req, res) => {
                 'ruleId': saverRules.filter(saverRule => saverRule.deviceId == device.deviceId)[0].ruleId
             }
             // devices[index].saverRule.ruleId = saverRules.filter(saverRule => saverRule.deviceId == device.deviceId)[0]
-
         })
-
-
 
         // Devolvemos los dispositivos encontrados
         if (devices != "undefined") {
+            console.log("[OK]".green + "[Devices] ".blue + "Se han encontrado los dispositivos del usuario");
             res.json({
                 'status': 'success',
                 'description': 'Se han encontrado los siguientes dispositivos',
                 'devices': devices
             })
         } else {
+            console.log("[FAIL]".red + "[Devices] ".blue + "No se han encontrado los dispositivos del usuario");
             res.json({
                 'status': 'fail',
                 'error': "No se han encontrado dispositivos"
             })
         }
     } catch (error) {
+        console.log("[FAIL]".red + "[Devices] ".blue + "Error: No se pudieron obtener los dispositivos: " + error);
         res.json({
             'status': 'fail',
             'error': error
@@ -75,8 +76,9 @@ router.get("/devices", comprobacionToken, async (req, res) => {
 
 // Crear nuevo dispositivo
 router.post("/devices", comprobacionToken, async (req, res) => {
-
     try {
+        console.log("[INFO]".magenta + "[Devices] ".blue + "Creando el dispositivo");
+
 
         // Recogemos los datos enviados por post
         var nuevoDispositivo = req.body.nuevoDispositivo;
@@ -93,16 +95,19 @@ router.post("/devices", comprobacionToken, async (req, res) => {
         // Crear el nuevo dispositivo en la base de datos
         await deviceModel.create(nuevoDispositivo);
 
+        // Crear Saver Rule
         await createSaverRule(userId, nuevoDispositivo.deviceId, true);
 
         // TODO: Comprobar que realmente se ha añadido antes de enviar la respuesta
+        console.log("[OK]".green + "[Devices] ".blue + "Dispositivo añadido correctamente");
+
         res.json({
             'status': 'success',
             'description': 'Dispositivo añadido correctamente',
         });
 
     } catch (err) {
-
+        console.log("[FAIL]".red + "[Devices] ".blue + "No se ha podido crear el dispositivo: " + err);
         res.json({
             'status': 'fail',
             'error': err
@@ -114,7 +119,7 @@ router.post("/devices", comprobacionToken, async (req, res) => {
 // Eliminar un dispositivo
 router.delete("/devices", comprobacionToken, async (req, res) => {
     try {
-        console.log("Intentando eliminar dispositivo ");
+        console.log("[INFO]".magenta + "[Devices] ".blue + "Intentando eliminar dispositivo ");
 
         // Ahora que hemos confirmado que la request tiene un token valido, listamos los usuarios de este usuario
         const userId = req.userData._id;
@@ -134,7 +139,7 @@ router.delete("/devices", comprobacionToken, async (req, res) => {
         if (result.deletedCount > 0) {
 
 
-            console.log("Dispositivo " + deviceId + " eliminado correctamente");
+            console.log("[OK]".green + "[Devices] ".blue + "Dispositivo " + deviceId + " eliminado correctamente");
 
             res.json({
                 'status': 'success',
@@ -144,7 +149,7 @@ router.delete("/devices", comprobacionToken, async (req, res) => {
             // Si no se ha eliminado ningun dispositivo
         } else {
 
-            console.log("No se ha encontrado el dispositivo: " + deviceId);
+            console.log("[FAIL]".red + "[Devices] ".blue + "No se ha encontrado el dispositivoa eliminar: " + deviceId);
 
             res.json({
                 'status': 'fail',
@@ -153,7 +158,7 @@ router.delete("/devices", comprobacionToken, async (req, res) => {
         }
 
     } catch (error) {
-        console.log("Error al eliminar dispositivo: " + error);
+        console.log("[FAIL]".red + "[Devices] ".blue + "Error al eliminar dispositivo: " + error);
         res.json({
             'status': 'fail',
             'error': error
@@ -169,10 +174,27 @@ router.put("/devices", (req, res) => {
 
 // Actualizar el estado del saverRule para un dispositivo concreto
 router.put("/deviceSaverRule", comprobacionToken, async (req, res) => {
-    // let newSaverRule = req.body.newSaverRule;
-    // let userId = req.body.
+    try {
+        console.log("[INFO]".magenta + "[Devices] ".blue + "Actualizando el estado de la Saver Rule ");
 
-    // await updateSaverRule()
+        let newSaverRule = req.body.newSaverRule;
+
+        if (await updateSaverRule(newSaverRule.ruleId, newSaverRule.status)) {
+            res.json({
+                'status': 'success',
+                'description': 'Dispositivo eliminado correctamente'
+            });
+        } else {
+            throw "Error en la funcion updateSaverRule"
+        }
+    } catch (error) {
+        console.log("[FAIL]".red + "[Devices] ".blue + "Error al actualizar el SaverRule: " + error);
+        res.json({
+            'status': 'fail',
+            'error': error
+        });
+    }
+
 
 });
 
@@ -186,19 +208,23 @@ async function getSaverRules(userId) {
             'userId': userId
         });
 
+        if (saverRules) {
+            console.log("[OK]".green + "[Devices] ".blue + "Se han encontrado las Saver Rules")
+        }
         // Se devuelven las reglas encontradas
         return saverRules
 
     } catch (error) {
-        console.log("Error al intentar obtener las reglas de guardado: " + error)
+        console.log("[FAIL]".red + "[Devices] ".blue + "Error al intentar obtener las reglas de guardado: " + error)
         return false
     }
 }
 
 // POST crear una regla (Se llama al crear un dispositivo)
 async function createSaverRule(userId, deviceId, status) {
-
     try {
+
+        console.log("[INFO]".magenta + "[Devices] ".blue + "Creando la Saver Rule")
 
         // Endpoint de EMQX para crear reglas
         let url = "http://localhost:8085/api/v4/rules/";
@@ -229,11 +255,12 @@ async function createSaverRule(userId, deviceId, status) {
         // Llamada a la API de EMQX para crear la regla
         const response = await axios.post(url, newRuleConfig, emqx_API_Auth)
 
-        console.log(response.data)
+        // console.log(response.data)
 
         // Si se crea la regla correctamente, se guardara su ruleId en la bbdd
         if (response.status === 200 && response.data.data.id) {
 
+            console.log("[OK]".green + "[Devices] ".blue + "Se han creado las Saver Rules. Almacenándolas en BBDD")
             // Se crea el registro de la nueva regla en bbdd
             await saverRuleModel.create({
                 'userId': userId,
@@ -248,15 +275,16 @@ async function createSaverRule(userId, deviceId, status) {
         }
 
     } catch (error) {
-        console.log("Error al crear la regla de guardado: " + error)
+        console.log("[FAIL]".red + "[Devices] ".blue + "Error al crear la Saver Rule: " + error)
         return false
     }
 }
 
 // PUT Actualizar el estado 'activo' de una regla
-async function updateSaverRule(userId, deviceId, ruleId, status) {
-
+async function updateSaverRule(ruleId, status) {
     try {
+
+        console.log("[INFO]".magenta + "[Devices] ".blue + "Actualizando las Saver Rules")
         // Endpoint de EMQX para crear reglas
         let url = "http://localhost:8085/api/v4/rules/" + ruleId;
 
@@ -270,21 +298,28 @@ async function updateSaverRule(userId, deviceId, ruleId, status) {
         // Si se crea la regla correctamente, se guardara su ruleId en la bbdd
         if (response.status === 200 && response.data.data.id) {
 
-            // Se crea el registro de la nueva regla en bbdd
-            await saverRuleModel.updateOne({
-                'userId': userId,
-                'deviceId': deviceId,
+            console.log("[OK]".green + "[Devices] ".blue + "Se ha actualizado la Saver Rules. Actualizando en BBDD")
+
+            // Se actualiza la regla en BBDD
+
+            let result = await saverRuleModel.updateOne({
                 'ruleId': ruleId,
             }, {
-                'activo': status
-            })
-            return true
+                'status': status
+            });
+
+            if (result.nModified == 1) {
+                return true
+            } else {
+                throw "No se ha podido actualizar la regla en BBDD"
+            }
+
         } else {
             return false
         }
 
     } catch (error) {
-        console.log("Error al  actualizar la regla de guardado: " + Error)
+        console.log("[FAIL]".red + "[Devices] ".blue + "Error al  actualizar la Saver Rule: " + error)
         return false
     }
 
@@ -293,21 +328,27 @@ async function updateSaverRule(userId, deviceId, ruleId, status) {
 // DELETE Eliminar una regla
 async function deleteSaverRule(deviceId) {
     try {
+        console.log("[INFO]".magenta + "[Devices] ".blue + "Eliminando la Saver Rule")
 
-        // Borramos la regla en la base de datos
-        saverRuleModel.findOneAndDelete({
+        // Busacmos la Saver Rule y la borramos en la base de datos
+        const ruleFound = await saverRuleModel.findOneAndDelete({
             'deviceId': deviceId
         })
 
-        url = "http://localhost:8085/api/v4/rules" + ruleId
+
+        // Borramos la Saver Rule de EMQX
+        let url = "http://localhost:8085/api/v4/rules/" + ruleFound.ruleId
 
         const response = await axios.delete(url, emqx_API_Auth)
+
+        console.log("[OK]".green + "[Devices] ".blue + "Se ha eliminado la Saver Rule. Eliminando en BBDD")
+        // TODO: Terminar eliminacion en BBDD
 
         return true
 
     } catch (error) {
 
-        console.log("No se ha podido eliminar la relga: " + error)
+        console.log("[FAIL]".red + "[Devices] ".blue + "No se ha podido eliminar la Saver Rule: " + error)
         return false
 
     }

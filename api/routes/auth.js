@@ -13,6 +13,8 @@ import userModel from '../modelos/userModel.js'
 router.post('/register', async (req, res) => {
     try {
 
+        console.log("[INFO]".magenta + "[Auth] ".blue + "Registrando el usuario")
+
         // Recogemos los datos de POST
         const userToRegister = req.body;
 
@@ -28,7 +30,7 @@ router.post('/register', async (req, res) => {
         });
 
 
-        console.log("Usuario " + usuario.nombre + " creado correctamente");
+        console.log("[OK]".green + "[Auth] ".blue + "Usuario " + usuario.nombre + " creado correctamente");
 
         // Devolucion de usuario registrado correctamente
         res.json({
@@ -39,7 +41,7 @@ router.post('/register', async (req, res) => {
 
     } catch (err) {
 
-        console.log("ERROR. No se ha añadido el usuario. Razon: " + err);
+        console.log("[FAIL]".red + "[Auth] ".blue + "ERROR. No se ha añadido el usuario: " + err);
 
         // Devolucion de error 500 en el registro y el error para detectar si el email es unico
         res.status(500).json({
@@ -54,6 +56,7 @@ router.post('/register', async (req, res) => {
 // Endpoint de Login
 router.post('/login', async (req, res) => {
     try {
+        console.log("[INFO]".magenta + "[Auth] ".blue + "Iniciando sesión")
 
         // Recogemos los datos de POST
         const userToLogin = req.body;
@@ -88,7 +91,7 @@ router.post('/login', async (req, res) => {
 
                 // Si el token es correcto se inicia la sesión
                 if (token) {
-                    console.log("Sesion iniciada correctamente");
+                    console.log("[OK]".green + "[Auth] ".blue + "Sesión iniciada correctamente");
                     // Devolucion de login correcto y token
                     return res.json({
                         'status': 'success',
@@ -106,7 +109,7 @@ router.post('/login', async (req, res) => {
             }
         }
     } catch (err) {
-        console.log("Hubo un fallo en el inicio se sesion");
+        console.log("[FAIL]".red + "[Auth] ".blue + "Hubo un fallo en el inicio se sesion; " + err);
         res.status(401).json({
             'status': 'fail',
             'description': 'Hubo un fallo en el inicio de sesion',

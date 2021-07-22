@@ -28,6 +28,8 @@ global.alarmResource = null;
 
 async function getAllResources() {
     try {
+        console.log("[INFO]".magenta + "[EMQX] ".blue + "Obteniendo los recursos de EMQX")
+
 
         const url = 'http://localhost:8085/api/v4/resources'
 
@@ -41,11 +43,11 @@ async function getAllResources() {
             global.alarmResource = resources.find(resource => resource.id == "alarm_resource")
             global.saverResource = resources.find(resource => resource.id == "saver_resource")
 
-            console.log("Se han encontrado correctamente los recursos")
+            console.log("[OK]".green + "[EMQX] ".blue + "Se han encontrado correctamente los recursos de API")
 
             // Si alguno de los dos recursos no hubiese sido encontrado, se llama a createResources()
             if (global.alarmResource == null || global.saverResource == null) {
-
+                console.log("[Warning]".yellow + "[EMQX] ".blue + "No se han encontrado los recursos de API. Se procederá a crearlos")
                 createResources();
             }
         } else {
@@ -53,7 +55,7 @@ async function getAllResources() {
         }
 
     } catch (error) {
-        console.log("Error: " + error)
+        console.log("[FAIL]".red + "[EMQX] ".blue + "Error al encontrar los recursos: " + error)
     }
 
 
@@ -62,8 +64,8 @@ async function getAllResources() {
 
 // Function para crear los recursos Saver y Alarm
 async function createResources() {
-
     try {
+        console.log("[INFO]".magenta + "[EMQX] ".blue + "Creando los recursos de EMQX API")
 
         const url = 'http://localhost:8085/api/v4/resources'
 
@@ -100,15 +102,18 @@ async function createResources() {
 
         if (response1.status === 200 && response2.status === 200) {
             // Una vez que se han creado correctamente los recursos, volvemos  a almacenarlos en variables globales
+            console.log("[OK]".green + "[EMQX] ".blue + "Recursos creados correctamente")
+
             getAllResources();
 
-            console.log("Recursos creados correctamente");
+
         } else {
             throw "No se han podido crear los recursos correctamente"
         }
 
     } catch (error) {
-        console.log("Error: " + error)
+        console.log("[FAIL]".red + "[EMQX] ".blue + "Error al crear los recursos: " + error)
+
     }
 
 

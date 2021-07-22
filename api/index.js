@@ -2,6 +2,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const color = require('colors');
 
 // Instanciación de ExpressJs y configuracion
 const api = express();
@@ -24,7 +25,8 @@ module.exports = api;
 
 // Servidor en el puerto 1996
 api.listen(1996, () => {
-    console.log("escuchando en 1996");
+    console.log("\n\n");
+    console.log("[OK]".green + "[Express] ".blue + "Servidor iniciado. Escuchando en 1996");
 });
 
 
@@ -60,7 +62,7 @@ const mongoOptions = {
 
 // Conexion a mongo
 mongoose.connect(uri, mongoOptions).then(() => {
-    console.log("Conexion a MongoDB exitosa");
+    console.log("[OK]".green + "[MongoDB] ".blue + "Conexion a MongoDB exitosa");
 }, (err) => {
-    console.log("Error en la conexion a MongoDB: " + err);
+    console.log("[Fail]".red + "[MongoDB] ".blue + "Error en la conexion a MongoDB: " + err + "");
 });
