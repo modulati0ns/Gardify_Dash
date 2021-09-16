@@ -20,33 +20,6 @@
     </div>
 
     <ul class="navbar-nav" :class="$rtl.isRTL ? 'mr-auto' : 'ml-auto'">
-      <div class="search-bar input-group" @click="searchModalVisible = true">
-        <button
-          class="btn btn-link"
-          id="search-button"
-          data-toggle="modal"
-          data-target="#searchModal"
-        >
-          <i class="tim-icons icon-zoom-split"></i>
-        </button>
-        <!-- You can choose types of search input -->
-      </div>
-      <modal
-        :show.sync="searchModalVisible"
-        class="modal-search"
-        id="searchModal"
-        :centered="false"
-        :show-close="true"
-      >
-        <input
-          slot="header"
-          v-model="searchQuery"
-          type="text"
-          class="form-control"
-          id="inlineFormInputGroup"
-          placeholder="SEARCH"
-        />
-      </modal>
       <base-dropdown
         tag="li"
         :menu-on-right="!$rtl.isRTL"
@@ -88,6 +61,10 @@
         menu-classes="dropdown-navbar"
       >
         <template slot="title">
+          <span class="user"
+            >{{ $store.state.user.nombre }}
+            {{ $store.state.user.apellidos }}</span
+          >
           <div class="photo"><img src="img/mike.jpg" /></div>
           <b class="caret d-none d-lg-block d-xl-block"></b>
           <p class="d-lg-none">Log out</p>

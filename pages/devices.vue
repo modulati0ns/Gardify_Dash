@@ -341,7 +341,6 @@ export default {
         });
     },
     updateSaverRuleStatus(device) {
-      console.log(device);
       try {
         // Hacemos una copia de la variable para no depender de la store
         let deviceCopy = JSON.parse(JSON.stringify(device));
@@ -359,7 +358,6 @@ export default {
           },
         };
 
-        console.log(requestBody);
         // Llamada a API de GFY para actualizar el deviceSaverRule
         this.$axios
           .put("/gfyapiv1/deviceSaverRule", requestBody, requestHeader)
@@ -368,13 +366,13 @@ export default {
               // Si todo ha salido bien se vuelven a obtener los dispositivos
               this.$store.dispatch("obtenerDispositivos");
 
-              // this.$notify({
-              //   verticalAlign: "bottom",
-              //   horizontalAlign: "center",
-              //   type: "success",
-              //   icon: "tim-icons icon-check-2",
-              //   message: "Se actualizó el estado del dispositivo correctamente",
-              // });
+              this.$notify({
+                verticalAlign: "bottom",
+                horizontalAlign: "center",
+                type: "success",
+                icon: "tim-icons icon-check-2",
+                message: "Se actualizó el estado del dispositivo correctamente",
+              });
             }
           });
       } catch (error) {

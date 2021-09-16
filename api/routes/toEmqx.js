@@ -28,8 +28,6 @@ global.alarmResource = null;
 
 async function getAllResources() {
     try {
-        console.log("[INFO]".magenta + "[EMQX] ".blue + "Obteniendo los recursos de EMQX")
-
 
         const url = 'http://localhost:8085/api/v4/resources'
 
@@ -120,8 +118,10 @@ async function createResources() {
 
 }
 
+setTimeout(() => {
+    getAllResources();
+}, 2000);
 
-getAllResources();
 
 
 

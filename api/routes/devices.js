@@ -92,11 +92,13 @@ router.post("/devices", comprobacionToken, async (req, res) => {
         // metemos el tiempo actual (createdTime) en los datos a agregar
         nuevoDispositivo.createdTime = Date.now();
 
+        // Crear Saver Rule de EMQX para el dispositivo
+        await createSaverRule(userId, nuevoDispositivo.deviceId, true);
+
         // Crear el nuevo dispositivo en la base de datos
         await deviceModel.create(nuevoDispositivo);
 
-        // Crear Saver Rule
-        await createSaverRule(userId, nuevoDispositivo.deviceId, true);
+
 
         // TODO: Comprobar que realmente se ha añadido antes de enviar la respuesta
         console.log("[OK]".green + "[Devices] ".blue + "Dispositivo añadido correctamente");
@@ -236,7 +238,7 @@ async function createSaverRule(userId, deviceId, status) {
         let sql = "SELECT topic, payload FROM \"" + topic + "\" WHERE payload.activo = 1";
 
         // TODO: Se puede prescindir del UserId puesto que esta contenido en el topic
-        let payloadTemplate = '{"userId": "' + userId + '", "payload": ${paylaod}, "topic": "${topic}"}';
+        let payloadTemplate = '{"userId": "' + userId + '", "payload": ${payload}, "topic": "${topic}"}';
 
         let newRuleConfig = {
             "rawsql": sql,

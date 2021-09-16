@@ -79,7 +79,7 @@ function initScrollbar(className) {
   }
 }
 
-import DashboardNavbar from "@/components/Layout/starter/SampleNavbar.vue";
+import DashboardNavbar from "@/components/Layout/DashboardNavbar.vue";
 import ContentFooter from "@/components/Layout/starter/SampleFooter.vue";
 import DashboardContent from "@/components/Layout/Content.vue";
 import { SlideYDownTransition, ZoomCenterTransition } from "vue2-transitions";
