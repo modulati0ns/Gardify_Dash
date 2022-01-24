@@ -12,7 +12,7 @@
         <div class="col-3"><plant-status :config="config3"></plant-status></div>
         <div class="col-3"><plant-status :config="config4"></plant-status></div>
       </div>
-      <button @click="sendDataToWidget()">PRUEVA</button>
+      <base-button @click="sendDataToWidget()">PRUEVA</base-button>
       <card type="chart">
         <template slot="header">
           <div class="row">
@@ -422,7 +422,9 @@ export default {
         temperatura: Math.round(Math.random() * (99 - 1) + 1, 5),
         humedad: Math.round(Math.random() * (100 - 1) + 1, 5),
       };
-      this.$nuxt.$emit("gardify/1123/hash/1/2", dataToSend);
+      const topic = "gardify";
+      console.log(topic);
+      this.$nuxt.$emit(topic, dataToSend);
     },
     initBigChart(index) {
       let chartData = {

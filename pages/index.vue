@@ -12,7 +12,7 @@
         </div>
       </div>
 
-      <button @click="sendDataToWidget()">PRUEVA</button>
+      <button @click="sendDataToWidget()">PRUsEVA</button>
       <card type="chart">
         <template slot="header">
           <div class="row">
@@ -394,10 +394,17 @@ export default {
         temperatura: Math.round(Math.random() * (99 - 1) + 1, 5),
         humedad: Math.round(Math.random() * (100 - 1) + 1, 5),
       };
-      this.$nuxt.$emit(
-        "gardify/60e359a12fa18312c496d7ba/hash/sensuia/a",
-        dataToSend
-      );
+      const topic =
+        "gardify" +
+        "/" +
+        this.$store.state.user.userId +
+        "/" +
+        "hash" +
+        "/" +
+        "223322" +
+        "/" +
+        "";
+      this.$nuxt.$emit(topic, dataToSend);
     },
     initBigChart(index) {
       let chartData = {
