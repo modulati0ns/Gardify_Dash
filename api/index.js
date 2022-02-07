@@ -53,10 +53,6 @@ var uri =
 
 // Opciones de conexion a MongoDB
 const mongoOptions = {
-    useNewUrlParser: true,
-    useCreateIndex: true,
-    useUnifiedTopology: true,
-    useNewUrlParser: true,
     authSource: "admin"
 }
 

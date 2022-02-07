@@ -12,7 +12,6 @@
         </div>
       </div>
 
-      <button @click="sendDataToWidget()">PRUsEVA</button>
       <card type="chart">
         <template slot="header">
           <div class="row">

@@ -40,15 +40,16 @@ router.get("/devices", comprobacionToken, async (req, res) => {
         const saverRules = await getSaverRules(userId)
 
 
-
         // Cruzado de array de dispositivos con status del saverRule
         devices.forEach((device, index) => {
+            console.log(device.deviceId)
             devices[index].saverRule = {
                 'status': saverRules.filter(saverRule => saverRule.deviceId == device.deviceId)[0].status,
                 'ruleId': saverRules.filter(saverRule => saverRule.deviceId == device.deviceId)[0].ruleId
             }
             // devices[index].saverRule.ruleId = saverRules.filter(saverRule => saverRule.deviceId == device.deviceId)[0]
         })
+        console.log(devices)
 
         // Devolvemos los dispositivos encontrados
         if (devices != "undefined") {

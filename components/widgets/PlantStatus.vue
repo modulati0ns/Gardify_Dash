@@ -63,7 +63,8 @@
     </template>
     <template v-else>
       <card class="plantStatus">
-        <fa class="close" :icon="['fas', 'times']" @click="deletePlant()" />
+        <!-- Boton de eliminar en el fron de la card -->
+        <!-- <fa class="close" :icon="['fas', 'times']" @click="deletePlant()" /> -->
         <div slot="header">
           <h2 class="card-title">
             {{ getWidgets[config.position - 1].nombre }}
@@ -216,8 +217,13 @@ export default {
 
 <style lang="scss">
 .el-select-dropdown.el-popper {
-  width: 30px;
+  width: 16rem !important;
+  min-width: 16rem !important;
 }
+
+// .el-form .el-select {
+//   width: 30px;
+// }
 
 .card-container {
   display: flex;
@@ -295,8 +301,10 @@ export default {
 }
 
 .plantStatus {
+  display: flex;
+  flex-direction: column;
   text-align: center;
-  height: 20rem;
+  height: 21rem;
 }
 
 .data {

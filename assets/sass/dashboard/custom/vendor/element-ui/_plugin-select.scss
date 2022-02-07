@@ -1,7 +1,5 @@
 @import "../../variables";
 @mixin select($type, $color) {
-  .select-#{$type}.el-select {
-  }
   .select-#{$type}.el-select .el-input {
     .el-input__suffix {
       display: flex;
