@@ -14,7 +14,7 @@
       { [`btn-${size}`]: size },
       { 'btn-simple': simple },
       { 'btn-link': link },
-      { disabled: disabled && tag !== 'button' }
+      { disabled: disabled && tag !== 'button' },
     ]"
   >
     <slot name="loading">
@@ -25,12 +25,12 @@
 </template>
 <script>
 export default {
-  name: 'base-button',
+  name: "base-button",
   props: {
     tag: {
       type: String,
-      default: 'button',
-      description: 'Button html tag'
+      default: "button",
+      description: "Button html tag",
     },
     round: Boolean,
     icon: Boolean,
@@ -40,33 +40,33 @@ export default {
     disabled: Boolean,
     type: {
       type: String,
-      default: 'default',
-      description: 'Button type (primary|secondary|danger etc)'
+      default: "default",
+      description: "Button type (primary|secondary|danger etc)",
     },
     nativeType: {
       type: String,
-      default: 'button',
-      description: 'Button native type (e.g button, input etc)'
+      default: "button",
+      description: "Button native type (e.g button, input etc)",
     },
     size: {
       type: String,
-      default: '',
-      description: 'Button size (sm|lg)'
+      default: "",
+      description: "Button size (sm|lg)",
     },
     simple: {
       type: Boolean,
-      description: 'Whether button is simple (outlined)'
+      description: "Whether button is simple (outlined)",
     },
     link: {
       type: Boolean,
-      description: 'Whether button is a link (no borders or background)'
-    }
+      description: "Whether button is a link (no borders or background)",
+    },
   },
   methods: {
     handleClick(evt) {
-      this.$emit('click', evt);
-    }
-  }
+      this.$emit("click", evt);
+    },
+  },
 };
 </script>
 <style scoped lang="scss">
@@ -74,7 +74,7 @@ export default {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  /deep/ i {
+  i {
     padding: 0 3px;
   }
 }
